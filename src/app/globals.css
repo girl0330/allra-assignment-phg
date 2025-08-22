@@ -1,13 +1,13 @@
-/* globals.css (또는 공용 스타일 파일) */
+/* 1. Tailwind import */
 @import 'tailwindcss';
 
-/* 폰트 임베드(있다면 그대로 유지) */
+/* 2. 폰트 임베드 */
 @font-face {
   font-family: 'Pretendard';
   src: url('/fonts/pretendard/Pretendard-Regular.woff2') format('woff2');
 }
 
-/* Tailwind v4: 기존 tailwind.config의 theme.extend 내용을 @theme로 이관 */
+/* 3. Tailwind v4 토큰 정의 */
 @theme {
   /* size */
   --spacing-header: 60px;
@@ -19,7 +19,6 @@
 
   /* colors */
   --color-primary: #18a0fb;
-
   --color-secondary-700: #005ca8;
   --color-secondary-600: #0074d0;
   --color-secondary-400: #2fadff;
@@ -89,11 +88,31 @@
   --line-height-144: 144%;
   --line-height-150: 150%;
 
-  /* Letter spacings (em 단위로!) */
-  --tracking--2: -0.02em; /* = -2% 느낌 */
-  --tracking--1: -0.01em; /* = -1% 느낌 */
+  /* Letter spacings */
+  --tracking--2: -0.02em;
+  --tracking--1: -0.01em;
+
+  /* rem으로 변환 (1rem = 16px 기준) */
+  --spacing-0: 0; /* 0px */
+  --spacing-1: 0.125rem; /* 2px */
+  --spacing-2: 0.25rem; /* 4px */
+  --spacing-3: 0.375rem; /* 6px */
+  --spacing-4: 0.5rem; /* 8px */
+  --spacing-5: 0.625rem; /* 10px */
+  --spacing-6: 1rem; /* 16px */
+  --spacing-7: 1.25rem; /* 20px */
+  --spacing-8: 1.5rem; /* 24px */
+  --spacing-9: 2rem; /* 32px */
+  --spacing-10: 2.5rem; /* 40px */
+  --spacing-11: 3rem; /* 48px */
+  --spacing-12: 3.5rem; /* 56px */
+  --spacing-13: 4rem; /* 64px */
+  --spacing-14: 5rem; /* 80px */
 }
 
+/* 4. 기본 spacing scale (:root 활용) */
+
+/* 5. 커스텀 유틸리티 레이어 */
 @layer utilities {
   .container {
     margin-inline: auto;
@@ -156,7 +175,7 @@
     line-height: var(--line-height-140);
     letter-spacing: var(--tracking--1);
   }
-
+  /* 
   @media (min-width: 48rem) {
     .container {
       padding-inline: 2.5rem;
@@ -167,10 +186,14 @@
     .container {
       padding-inline: 20px;
     }
-  }
+  } */
 }
 
-/* 기본 바디 폰트 적용(선택) */
+/* 6. 바디 기본 스타일 */
 body {
   font-family: var(--font-pretendard);
+}
+
+* {
+  word-break: keep-all;
 }
