@@ -56,7 +56,7 @@ export default function SignUpPage() {
     Object.fromEntries(AGREEMENTS.map((a) => [a.id, false] as const))
   );
   const [password, setPassword] = useState('');
-  const [businessNo, setBussinessNo] = useState('');
+  const [businessNumber, setBusinessNumber] = useState('');
   const [inputText, setInputText] = useState('');
 
   const requiredIds = useMemo(() => AGREEMENTS.filter((a) => a.required).map((a) => a.id), []);
@@ -170,35 +170,28 @@ export default function SignUpPage() {
                   >
                     사업자등록번호 (ID)
                   </label>
-                  <a
+                  <Link
                     target="_blank"
                     className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed p-0! underline underline-offset-4 hover:bg-label-100 active:bg-background-alternative disabled:text-status-disable h-[32px] gap-1 rounded-sm px-6 text-body-3 font-medium text-label-700"
                     href="https://www.ftc.go.kr/www/selectBizCommList.do?key=253&amp;token=71FB05C5-4829-80F4-C230-B0FB890B3E892EB62DA22EDEFB1080D78429A22093C1"
                   >
                     사업자 번호가 기억나지 않아요
-                  </a>
+                  </Link>
                 </div>
 
                 <div className="flex items-stretch gap-4">
                   <Input
-                    id="businessNo"
-                    name="businessNo"
-                    placeholder="숫자만 10자리 입력"
-                    autoComplete="username"
+                    id="businessNumber"
+                    name="businessNumber"
+                    placeholder="-제외 10자리 입력"
                     type="text"
-                    labelText="사업자등록번호"
+                    labelText="사업자등록번호 (ID)"
                     labelHidden={true}
-                    icon="clear"
-                    value={businessNo}
+                    value={businessNumber}
                     onChange={(e) => {
-                      setBussinessNo(e.target.value);
-                    }}
-                    clearable
-                    onClear={() => {
-                      setBussinessNo('');
+                      setBusinessNumber(e.target.value);
                     }}
                     errorText="사업자등록번호 10자리를 입력해 주세요."
-                    className="mb-[8px]"
                   />
 
                   <button
@@ -209,7 +202,8 @@ export default function SignUpPage() {
                   </button>
                 </div>
               </div>
-
+            </div>
+            <div>
               <div className="space-y-4">
                 <div className="space-y-3">
                   <Input
