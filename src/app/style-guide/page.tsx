@@ -1,14 +1,89 @@
 'use client';
 
+import Input from '@/shared/components/Input';
+import { useState } from 'react';
+
 type Swatch = { name: string; className: string; text?: string };
 
 export default function StyleGuidePage() {
+  const [businessNo, setBussinessNo] = useState('');
+  const [password, setPassword] = useState('');
+  const [inputText, setInputText] = useState('');
+
   return (
     <div>
       <h1 className="text-display-2 font-bold">Style Guide</h1>
       <p className="mt-2 text-body-2 text-label-500">
         프로젝트에서 공통으로 사용하는 컬러, 타이포그래피, 컴포넌트, 레이아웃 샘플
       </p>
+      <div className="flex flex-col gap-6">
+        <Input
+          id="password"
+          name="password"
+          labelText="비밀번호"
+          icon="eye"
+          type="password"
+          placeholder="비밀번호를 입력해주세요."
+          autoComplete="current-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="ring-offset-background file:text-sm flex w-full rounded-md border border-line-200 bg-background-default px-6 py-[12.5px] file:border-0 file:bg-transparent file:font-medium placeholder:text-body-2 placeholder:text-label-500 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:border-0 disabled:bg-background-alternative disabled:text-status-disable disabled:placeholder:text-status-disable focus:ring-1 focus:ring-component-dark h-[48px] text-body-1"
+          errorText="8~15자리 영문, 숫자, 특수문자로 조합하여 입력해주세요"
+        />
+
+        <Input
+          id="businessNo"
+          name="businessNo"
+          placeholder="숫자만 10자리 입력"
+          autoComplete="username"
+          type="text"
+          labelText="사업자등록번호"
+          icon="clear"
+          value={businessNo}
+          onChange={(e) => {
+            setBussinessNo(e.target.value);
+          }}
+          clearable
+          onClear={() => {
+            setBussinessNo('');
+          }}
+          errorText="사업자등록번호 10자리를 입력해 주세요."
+        />
+      </div>
+
+      <div className="space-y-3">
+        <Input
+          id="password"
+          name="password"
+          labelText="비밀번호"
+          type="password"
+          placeholder="비밀번호를 입력해주세요."
+          autoComplete="current-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="ring-offset-background file:text-sm flex w-full rounded-md border border-line-200 bg-background-default px-6 py-[12.5px] file:border-0 file:bg-transparent file:font-medium placeholder:text-body-2 placeholder:text-label-500 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:border-0 disabled:bg-background-alternative disabled:text-status-disable disabled:placeholder:text-status-disable focus:ring-1 focus:ring-component-dark h-[48px] text-body-1"
+          errorText="8~15자리 영문, 숫자, 특수문자로 조합하여 입력해주세요"
+        />
+      </div>
+
+      <div className="flex flex-col gap-6">
+        <Input
+          id="textInput"
+          name="textInput"
+          placeholder="문자 입력"
+          type="text"
+          labelText="텍스트 입력 input"
+          value={inputText}
+          onChange={(e) => {
+            setInputText(e.target.value);
+          }}
+          clearable
+          onClear={() => {
+            setInputText('');
+          }}
+          errorText="입력해주세요"
+        />
+      </div>
 
       {/* Colors */}
       <Section title="Colors">
