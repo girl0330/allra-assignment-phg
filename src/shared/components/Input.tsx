@@ -7,7 +7,7 @@ import { Eye, EyeOff, Check, X } from 'lucide-react';
 export type InputStatus = 'none' | 'error' | 'success';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label?: string;
+  labelText?: string;
   errorText?: string;
   status?: InputStatus;
   clearable?: boolean;
@@ -23,7 +23,7 @@ const Input = ({
   id,
   name,
   type = 'text',
-  label,
+  labelText,
   autoComplete = 'none',
   value,
   onChange,
@@ -62,12 +62,12 @@ const Input = ({
 
   return (
     <div className={`space-y-3 ${containerClassName ?? ''}`}>
-      {label && (
+      {labelText && (
         <label
           className="peer-disabled:cursor-not-allowed peer-disabled:text-status-disable text-body-3 font-medium text-label-700"
           htmlFor={id}
         >
-          {label}
+          {labelText}
         </label>
       )}
 
@@ -133,11 +133,6 @@ const Input = ({
       </div>
 
       {/* 에러 문구 */}
-      {/* {isFocused && (
-  <p className="text-xs text-blue-600">
-    현재 value는 {hasValue ? '있음(true)' : '없음(false)'} 입니다
-  </p>
-)} */}
       {isFocused && !hasValue ? <p className="text-xs text-red-600">{errorText}</p> : null}
     </div>
   );
