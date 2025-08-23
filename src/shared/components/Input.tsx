@@ -40,12 +40,14 @@ const Input = ({
   const [showPwd, setShowPwd] = useState(false);
   const isPassword = showPasswordToggle || type === 'password';
   const inputType = isPassword ? (showPwd ? 'text' : 'password') : type;
+  const [isFocused, setIsFocused] = useState(false);
 
   // input상태 설정
   const hasValue = typeof value === 'string' ? value.length > 0 : typeof value === 'number' ? true : false;
   const effectiveStatus: InputStatus = hasValue ? 'none' : 'error';
   const isError = !hasValue || effectiveStatus === 'error';
   const isSuccess = !isError && status === 'success';
+  const handleFocus = () => setIsFocused(true);
 
   // 아이콘 설정
   const needRightIcon = isPassword || (clearable && hasValue) || (showCheckOnValid && isSuccess && hasValue);
@@ -75,6 +77,7 @@ const Input = ({
           type={inputType}
           value={value}
           onChange={onChange}
+          onFocus={handleFocus}
           aria-invalid={isError || undefined}
           autoComplete={autoComplete}
           className={[
@@ -84,7 +87,7 @@ const Input = ({
             'focus-visible:outline-hidden disabled:cursor-not-allowed disabled:border-0',
             'disabled:bg-background-alternative disabled:text-status-disable disabled:placeholder:text-status-disable',
             'focus:ring-1 focus:ring-component-dark h-[48px]',
-            isError ? 'border-red-500 focus:ring-red-500' : '',
+            isFocused && isError ? 'border-red-500 focus:ring-red-500' : '',
             isSuccess ? 'border-green-500' : '',
             needRightIcon ? 'pr-12' : '',
             // 커스텀 확장
@@ -130,7 +133,12 @@ const Input = ({
       </div>
 
       {/* 에러 문구 */}
-      {!hasValue ? <p className="text-xs text-red-600">{errorText}</p> : null}
+      {/* {isFocused && (
+  <p className="text-xs text-blue-600">
+    현재 value는 {hasValue ? '있음(true)' : '없음(false)'} 입니다
+  </p>
+)} */}
+      {isFocused && !hasValue ? <p className="text-xs text-red-600">{errorText}</p> : null}
     </div>
   );
 };
