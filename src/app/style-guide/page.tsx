@@ -18,12 +18,27 @@ export default function StyleGuidePage() {
       </p>
       <div className="flex flex-col gap-6">
         <Input
+          id="password"
+          name="password"
+          labelText="비밀번호"
+          icon="eye"
+          type="password"
+          placeholder="비밀번호를 입력해주세요."
+          autoComplete="current-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="ring-offset-background file:text-sm flex w-full rounded-md border border-line-200 bg-background-default px-6 py-[12.5px] file:border-0 file:bg-transparent file:font-medium placeholder:text-body-2 placeholder:text-label-500 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:border-0 disabled:bg-background-alternative disabled:text-status-disable disabled:placeholder:text-status-disable focus:ring-1 focus:ring-component-dark h-[48px] text-body-1"
+          errorText="8~15자리 영문, 숫자, 특수문자로 조합하여 입력해주세요"
+        />
+
+        <Input
           id="businessNo"
           name="businessNo"
           placeholder="숫자만 10자리 입력"
           autoComplete="username"
           type="text"
-          label="사업자등록번호"
+          labelText="사업자등록번호"
+          icon="clear"
           value={businessNo}
           onChange={(e) => {
             setBussinessNo(e.target.value);
@@ -40,14 +55,13 @@ export default function StyleGuidePage() {
         <Input
           id="password"
           name="password"
-          label="비밀번호"
+          labelText="비밀번호"
           type="password"
           placeholder="비밀번호를 입력해주세요."
           autoComplete="current-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="ring-offset-background file:text-sm flex w-full rounded-md border border-line-200 bg-background-default px-6 py-[12.5px] file:border-0 file:bg-transparent file:font-medium placeholder:text-body-2 placeholder:text-label-500 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:border-0 disabled:bg-background-alternative disabled:text-status-disable disabled:placeholder:text-status-disable focus:ring-1 focus:ring-component-dark h-[48px] text-body-1"
-          showPasswordToggle
           errorText="8~15자리 영문, 숫자, 특수문자로 조합하여 입력해주세요"
         />
       </div>
@@ -58,7 +72,7 @@ export default function StyleGuidePage() {
           name="textInput"
           placeholder="문자 입력"
           type="text"
-          label="텍스트 입력 input"
+          labelText="텍스트 입력 input"
           value={inputText}
           onChange={(e) => {
             setInputText(e.target.value);

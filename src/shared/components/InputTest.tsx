@@ -11,9 +11,8 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   labelText?: string;
   errorText?: string;
   status?: InputStatus;
-  icon?: InputIcon; // clear | eye | none
+  icon?: InputIcon;
   clearable?: boolean;
-  //   showPasswordToggle?: boolean;
   showCheckOnValid?: boolean;
   onClear?: () => void;
   containerClassName?: string;
@@ -40,19 +39,14 @@ const Input = ({
   ...props
 }: InputProps) => {
   const [showPwd, setShowPwd] = useState(false);
-  const isPassword = type === 'password';
-  const inputType = isPassword ? (showPwd ? 'text' : 'password') : type;
   const [isFocused, setIsFocused] = useState(false);
 
-  // input상태 설정
+  // input상태
   const hasValue = typeof value === 'string' ? value.length > 0 : typeof value === 'number' ? true : false;
   const effectiveStatus: InputStatus = hasValue ? 'none' : 'error';
   const isError = !hasValue || effectiveStatus === 'error';
   const isSuccess = !isError && status === 'success';
   const handleFocus = () => setIsFocused(true);
-
-  // 아이콘 설정
-  const needRightIcon = isPassword || (clearable && hasValue) || (showCheckOnValid && isSuccess && hasValue);
 
   // 초기화 이벤트
   const handleClear = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -62,7 +56,9 @@ const Input = ({
     onChange?.({ target: { value: '' } } as unknown as React.ChangeEvent<HTMLInputElement>);
   };
 
-  // 페스워드 토글 이벤트
+  // 페스워드
+  const isPassword = type === 'password';
+  const inputType = isPassword ? (showPwd ? 'text' : 'password') : type;
   const handlePasswordToggle = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
