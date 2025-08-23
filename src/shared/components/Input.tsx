@@ -9,6 +9,7 @@ export type InputIcon = 'clear' | 'eye' | 'none';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   labelText?: string;
+  labelHidden?: boolean;
   errorText?: string;
   status?: InputStatus;
   icon?: InputIcon; // clear | eye | none
@@ -26,6 +27,7 @@ const Input = ({
   name,
   type = 'text',
   labelText,
+  labelHidden = false,
   autoComplete = 'none',
   value,
   onChange,
@@ -73,7 +75,9 @@ const Input = ({
     <div className={`space-y-3 ${containerClassName ?? ''}`}>
       {labelText && (
         <label
-          className="peer-disabled:cursor-not-allowed peer-disabled:text-status-disable text-body-3 font-medium text-label-700"
+          className={`peer-disabled:cursor-not-allowed peer-disabled:text-status-disable text-body-3 font-medium text-label-700 ${
+            labelHidden ? 'sr-only' : ''
+          }`}
           htmlFor={id}
         >
           {labelText}

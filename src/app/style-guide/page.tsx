@@ -21,6 +21,7 @@ export default function StyleGuidePage() {
           id="password"
           name="password"
           labelText="비밀번호"
+          labelHidden={false}
           icon="eye"
           type="password"
           placeholder="비밀번호를 입력해주세요."
@@ -48,6 +49,7 @@ export default function StyleGuidePage() {
             setBussinessNo('');
           }}
           errorText="사업자등록번호 10자리를 입력해 주세요."
+          className="mb-[8px]"
         />
       </div>
 
@@ -55,7 +57,7 @@ export default function StyleGuidePage() {
         <Input
           id="password"
           name="password"
-          labelText="비밀번호"
+          labelHidden={true}
           type="password"
           placeholder="비밀번호를 입력해주세요."
           autoComplete="current-password"
