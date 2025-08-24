@@ -1,6 +1,6 @@
 'use client';
 
-import Input from '@/shared/components/Input';
+import Input from '@/components/Input';
 import { useState } from 'react';
 
 type Swatch = { name: string; className: string; text?: string };

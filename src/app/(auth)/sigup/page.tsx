@@ -10,8 +10,8 @@
 
 import { useMemo, useState } from 'react';
 import { Check, ChevronRight } from 'lucide-react';
-import Input from '@/shared/components/Input';
 import Link from 'next/link';
+import Input from '@/components/Input';
 
 type AgreementItem = {
   id: string;

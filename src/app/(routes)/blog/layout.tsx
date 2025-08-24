@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
-import '../styles/globals.css';
-import Providers from './providers';
+import '../../styles/globals.css';
+import Providers from '../../providers';
 import localFont from 'next/font/local';
 import Link from 'next/link';
 import Image from 'next/image';
 
 const pretendard = localFont({
-  src: '../../public/fonts/PretendardVariable.woff2',
+  src: '../../../public/fonts/PretendardVariable.woff2',
   variable: '--font-pretendard',
   display: 'swap',
 });
