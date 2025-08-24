@@ -28,7 +28,7 @@ const Input = ({
   type = 'text',
   labelText,
   labelHidden = false,
-  autoComplete = 'none',
+  autoComplete = 'off',
   value,
   onChange,
   status = 'none',
