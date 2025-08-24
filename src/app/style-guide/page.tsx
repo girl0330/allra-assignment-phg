@@ -3,7 +3,7 @@ import { Link2 } from 'lucide-react';
 
 import Input from '@/components/Input';
 import { useState } from 'react';
-import ButtonTest from '@/components/Button';
+import Button from '@/components/Button';
 
 type Swatch = { name: string; className: string; text?: string };
 
@@ -19,12 +19,12 @@ export default function StyleGuidePage() {
         프로젝트에서 공통으로 사용하는 컬러, 타이포그래피, 컴포넌트, 레이아웃 샘플
       </p>
       <div className="space-y-10 flex flex-colum">
-        <ButtonTest className="">내가 만드는 버튼test</ButtonTest>
+        <Button className="">내가 만드는 버튼test</Button>
         {/* 텍스트만 있는 버튼 */}
-        <ButtonTest>회원가입test</ButtonTest>
+        <Button>회원가입test</Button>
 
         {/* 아이콘이 있는 버튼 */}
-        <ButtonTest icon={<Link2 size={20} />}>공유하기test</ButtonTest>
+        <Button icon={<Link2 size={20} />}>공유하기test</Button>
       </div>
 
       <div className="space-y-10">
