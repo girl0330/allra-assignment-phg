@@ -277,7 +277,7 @@ export default function SignUpPage() {
                 <Input
                   id="birthDate"
                   name="birthDate"
-                  placeholder="문자 입력"
+                  placeholder="생년월일 8자리 입력 (19900101)"
                   type="text"
                   labelText="대표자 생년월일"
                   value={birthDate}
@@ -292,7 +292,7 @@ export default function SignUpPage() {
                 <Input
                   id="phone"
                   name="phone"
-                  placeholder="문자 입력"
+                  placeholder="계약서 송부를 위해 꼭 본인정보 입력"
                   type="text"
                   labelText="대표자 휴대폰 번호"
                   value={phone}
@@ -307,7 +307,7 @@ export default function SignUpPage() {
                 <Input
                   id="email"
                   name="email"
-                  placeholder="문자 입력"
+                  placeholder="이메일 입력"
                   type="text"
                   labelText="대표자 이메일"
                   value={email}
