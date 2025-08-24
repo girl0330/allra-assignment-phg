@@ -1,7 +1,9 @@
 'use client';
+import { Link2 } from 'lucide-react';
 
 import Input from '@/components/Input';
 import { useState } from 'react';
+import ButtonTest from '@/components/Button';
 
 type Swatch = { name: string; className: string; text?: string };
 
@@ -16,6 +18,64 @@ export default function StyleGuidePage() {
       <p className="mt-2 text-body-2 text-label-500">
         프로젝트에서 공통으로 사용하는 컬러, 타이포그래피, 컴포넌트, 레이아웃 샘플
       </p>
+      <div className="space-y-10 flex flex-colum">
+        <ButtonTest className="">내가 만드는 버튼test</ButtonTest>
+        {/* 텍스트만 있는 버튼 */}
+        <ButtonTest>회원가입test</ButtonTest>
+
+        {/* 아이콘이 있는 버튼 */}
+        <ButtonTest icon={<Link2 size={20} />}>공유하기test</ButtonTest>
+      </div>
+
+      <div className="space-y-10">
+        <button className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed border bg-background-default text-label-800 hover:bg-label-100 active:bg-background-alternative disabled:border-line-400 disabled:text-status-disable h-[48px] gap-4 rounded-lg px-6 text-body-1 font-semibold">
+          목록으로 돌아가기
+        </button>
+        <a
+          className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed border border-secondary-300 bg-background-default text-primary hover:border-secondary-300 hover:bg-label-100 active:bg-background-alternative disabled:border-status-disable disabled:bg-background-default disabled:text-status-disable h-[32px] gap-1 rounded-sm px-6 text-body-3 font-medium"
+          href="/"
+        >
+          회원가입
+        </a>
+        <a
+          className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed border border-secondary-300 bg-background-default text-primary hover:border-secondary-300 hover:bg-label-100 active:bg-background-alternative disabled:border-status-disable disabled:bg-background-default disabled:text-status-disable h-[32px] gap-1 rounded-sm px-6 text-body-3 font-medium"
+          href="/"
+        >
+          로그인
+        </a>
+        <a
+          className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed border border-secondary-300 bg-background-default text-primary hover:border-secondary-300 hover:bg-label-100 active:bg-background-alternative disabled:border-status-disable disabled:bg-background-default disabled:text-status-disable h-[32px] gap-1 rounded-sm px-6 text-body-3 font-medium"
+          href="/sign-in?callbackUrl=%2Fblogs%3F"
+        >
+          로그인/회원가입
+        </a>
+        <button className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed border border-secondary-300 bg-background-default text-primary hover:border-secondary-300 hover:bg-label-100 active:bg-background-alternative disabled:border-status-disable disabled:bg-background-default disabled:text-status-disable h-[48px] gap-4 rounded-lg px-6 text-body-1 font-semibold">
+          <Link2 size={20} aria-hidden="true" />
+          공유하기
+        </button>
+        <button
+          className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed bg-primary text-label-100 hover:bg-secondary-400 active:bg-secondary-600 disabled:bg-status-disable disabled:text-label-100 h-[48px] md:h-[56px] gap-4 rounded-lg md:rounded-xl px-6 text-title-4 font-semibold w-full"
+          type="submit"
+        >
+          다음/비활성화
+        </button>
+        <button
+          className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed border border-secondary-300 bg-background-default text-primary hover:border-secondary-300 hover:bg-label-100 active:bg-background-alternative disabled:border-status-disable disabled:bg-background-default disabled:text-status-disable gap-3 rounded-md px-6 text-body-2 font-semibold h-[48px] min-w-[96px]"
+          type="button"
+        >
+          인증하기/비활성화
+        </button>
+        <button className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed bg-primary text-label-100 hover:bg-secondary-400 active:bg-secondary-600 disabled:bg-status-disable disabled:text-label-100 h-[48px] md:h-[56px] gap-4 rounded-lg md:rounded-xl px-6 text-title-4 font-semibold">
+          가입하기/비활성화
+        </button>
+        <button
+          className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed bg-primary text-label-100 hover:bg-secondary-400 active:bg-secondary-600 disabled:bg-status-disable disabled:text-label-100 h-[48px] md:h-[56px] gap-4 rounded-lg md:rounded-xl px-6 text-title-4 font-semibold mt-5 w-full"
+          type="button"
+        >
+          정산금 조회하기
+        </button>
+      </div>
+
       <div className="flex flex-col gap-6">
         <Input
           id="password"
