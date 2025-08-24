@@ -14,7 +14,6 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   status?: InputStatus;
   icon?: InputIcon; // clear | eye | none
   clearable?: boolean;
-  // showCheckOnValid?: boolean;
   onClear?: () => void;
   containerClassName?: string;
   className?: string;
@@ -34,15 +33,12 @@ const Input = ({
   errorText,
   clearable = false,
   icon = 'none',
-  // showCheckOnValid = false,
   className,
   containerClassName,
   onClear,
   ...props
 }: InputProps) => {
   const [showPwd, setShowPwd] = useState(false);
-  const isPassword = type === 'password';
-  const inputType = isPassword ? (showPwd ? 'text' : 'password') : type;
   const [isFocused, setIsFocused] = useState(false);
 
   // input상태 설정
@@ -60,7 +56,9 @@ const Input = ({
     onChange?.({ target: { value: '' } } as unknown as React.ChangeEvent<HTMLInputElement>);
   };
 
-  // 페스워드 토글 이벤트
+  // 페스워드 로직
+  const isPassword = type === 'password';
+  const inputType = isPassword ? (showPwd ? 'text' : 'password') : type;
   const handlePasswordToggle = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
