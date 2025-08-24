@@ -56,8 +56,13 @@ export default function SignUpPage() {
     Object.fromEntries(AGREEMENTS.map((a) => [a.id, false] as const))
   );
   const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
   const [businessNumber, setBusinessNumber] = useState('');
-  const [inputText, setInputText] = useState('');
+  const [userName, setUserName] = useState('');
+  const [companyName, setCompanyName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setInEmail] = useState('');
+  const [birthDate, setBirthDate] = useState('');
 
   const requiredIds = useMemo(() => AGREEMENTS.filter((a) => a.required).map((a) => a.id), []);
 
@@ -223,15 +228,15 @@ export default function SignUpPage() {
 
                 <div className="space-y-3">
                   <Input
-                    id="passwordConfirm"
+                    id="passwordConfirm "
                     name="passwordConfirm"
                     labelHidden={true}
                     type="password"
                     icon="eye"
                     placeholder="8~15자리/영문, 숫자, 특수문자 조합 재입력"
                     autoComplete="current-password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    value={passwordConfirm}
+                    onChange={(e) => setPasswordConfirm(e.target.value)}
                     className="ring-offset-background file:text-sm flex w-full rounded-md border border-line-200 bg-background-default px-6 py-[12.5px] file:border-0 file:bg-transparent file:font-medium placeholder:text-body-2 placeholder:text-label-500 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:border-0 disabled:bg-background-alternative disabled:text-status-disable disabled:placeholder:text-status-disable focus:ring-1 focus:ring-component-dark h-[48px] text-body-1"
                     errorText="8~15자리 영문, 숫자, 특수문자로 조합하여 입력해주세요"
                   />
@@ -245,13 +250,9 @@ export default function SignUpPage() {
                   placeholder="상호명 입력"
                   type="text"
                   labelText="상호명"
-                  value={inputText}
+                  value={companyName}
                   onChange={(e) => {
-                    setInputText(e.target.value);
-                  }}
-                  clearable
-                  onClear={() => {
-                    setInputText('');
+                    setCompanyName(e.target.value);
                   }}
                   errorText="입력해주세요"
                 />
@@ -259,18 +260,14 @@ export default function SignUpPage() {
 
               <div className="space-y-3">
                 <Input
-                  id="repName"
-                  name="repName"
+                  id="userName"
+                  name="userName"
                   placeholder="문자 입력"
                   type="text"
                   labelText="대표자"
-                  value={inputText}
+                  value={userName}
                   onChange={(e) => {
-                    setInputText(e.target.value);
-                  }}
-                  clearable
-                  onClear={() => {
-                    setInputText('');
+                    setUserName(e.target.value);
                   }}
                   errorText="입력해주세요"
                 />
@@ -278,18 +275,14 @@ export default function SignUpPage() {
 
               <div className="space-y-3">
                 <Input
-                  id="birth"
-                  name="birth"
+                  id="birthDate"
+                  name="birthDate"
                   placeholder="문자 입력"
                   type="text"
                   labelText="대표자 생년월일"
-                  value={inputText}
+                  value={birthDate}
                   onChange={(e) => {
-                    setInputText(e.target.value);
-                  }}
-                  clearable
-                  onClear={() => {
-                    setInputText('');
+                    setBirthDate(e.target.value);
                   }}
                   errorText="입력해주세요"
                 />
@@ -302,13 +295,9 @@ export default function SignUpPage() {
                   placeholder="문자 입력"
                   type="text"
                   labelText="대표자 휴대폰 번호"
-                  value={inputText}
+                  value={phone}
                   onChange={(e) => {
-                    setInputText(e.target.value);
-                  }}
-                  clearable
-                  onClear={() => {
-                    setInputText('');
+                    setPhone(e.target.value);
                   }}
                   errorText="입력해주세요"
                 />
@@ -321,13 +310,9 @@ export default function SignUpPage() {
                   placeholder="문자 입력"
                   type="text"
                   labelText="대표자 이메일"
-                  value={inputText}
+                  value={email}
                   onChange={(e) => {
-                    setInputText(e.target.value);
-                  }}
-                  clearable
-                  onClear={() => {
-                    setInputText('');
+                    setInEmail(e.target.value);
                   }}
                   errorText="입력해주세요"
                 />
