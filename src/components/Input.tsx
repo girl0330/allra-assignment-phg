@@ -5,7 +5,7 @@ import type React from 'react';
 import { Eye, EyeOff, Check, X } from 'lucide-react';
 
 export type InputStatus = 'none' | 'error' | 'success';
-export type InputIcon = 'clear' | 'eye' | 'none';
+export type InputIcon = 'clear' | 'eye' | 'none' | 'check';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   labelText?: string;
@@ -14,8 +14,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   status?: InputStatus;
   icon?: InputIcon; // clear | eye | none
   clearable?: boolean;
-  //   showPasswordToggle?: boolean;
-  showCheckOnValid?: boolean;
+  // showCheckOnValid?: boolean;
   onClear?: () => void;
   containerClassName?: string;
   className?: string;
@@ -35,7 +34,7 @@ const Input = ({
   errorText,
   clearable = false,
   icon = 'none',
-  showCheckOnValid = false,
+  // showCheckOnValid = false,
   className,
   containerClassName,
   onClear,
@@ -52,9 +51,6 @@ const Input = ({
   const isError = !hasValue || effectiveStatus === 'error';
   const isSuccess = !isError && status === 'success';
   const handleFocus = () => setIsFocused(true);
-
-  // 아이콘 설정
-  const needRightIcon = isPassword || (clearable && hasValue) || (showCheckOnValid && isSuccess && hasValue);
 
   // 초기화 이벤트
   const handleClear = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -94,11 +90,11 @@ const Input = ({
           aria-invalid={isError || undefined}
           autoComplete={autoComplete}
           className={[
-            'ring-offset-background file:text-sm flex w-full rounded-md border border-line-200 bg-background-default px-6 py-[12.5px]',
-            'file:border-0 file:bg-transparent file:font-medium',
+            'ring-offset-background flex w-full rounded-md border border-line-200 bg-background-default px-6 py-[12.5px] text-body-3 h-[48px]',
+            'file:font-medium file:text-sm flex w-full ',
             'placeholder:text-body-2 placeholder:text-label-500',
-            'focus-visible:outline-hidden disabled:cursor-not-allowed disabled:border-0',
-            'disabled:bg-background-alternative disabled:text-status-disable disabled:placeholder:text-status-disable',
+            'focus-visible:outline-hidden',
+            'disabled:cursor-not-allowed disabled:border-0 disabled:bg-background-alternative disabled:text-status-disable disabled:placeholder:text-status-disable',
             'focus:ring-1 focus:ring-component-dark h-[48px]',
             isFocused && isError ? 'border-red-500 focus:ring-red-500' : '',
             isSuccess ? 'border-green-500' : '',
@@ -110,13 +106,16 @@ const Input = ({
         />
 
         {/* 오른쪽 아이콘 영역 */}
-        {icon !== 'none' && (
+        {(icon !== 'none' || isSuccess) && (
           <div className="absolute top-1/2 right-7 -translate-y-1/2 flex items-center gap-2">
             {icon === 'clear' && hasValue && (
               <button type="button" onClick={handleClear} className="cursor-pointer" aria-label="입력 내용 지우기">
                 <X className="w-[24px] h-[24px] text-neutral-400 hover:text-neutral-600" />
               </button>
             )}
+
+            {/* 성공 아이콘 */}
+            {isSuccess && <Check className="w-[20px] h-[20px] text-status-correct" aria-label="인증 성공" />}
 
             {icon === 'eye' && (
               <button
