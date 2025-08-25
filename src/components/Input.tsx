@@ -1,22 +1,25 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type React from 'react';
-import { Eye, EyeOff, Check, X } from 'lucide-react';
+import { Eye, EyeOff, Check, X, Search } from 'lucide-react';
 
 export type InputStatus = 'none' | 'error' | 'success';
-export type InputIcon = 'clear' | 'eye' | 'none';
+export type InputIcon = 'clear' | 'eye' | 'none' | 'search';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   labelText?: string;
   labelHidden?: boolean;
   errorText?: string;
   status?: InputStatus;
-  icon?: InputIcon; // clear | eye | none
+  // icon?: InputIcon; // clear | eye | none
+  leftIcon?: InputIcon;
+  rightIcon?: InputIcon;
   clearable?: boolean;
   //   showPasswordToggle?: boolean;
   showCheckOnValid?: boolean;
   onClear?: () => void;
+  onSearch?: (value: string) => void;
   containerClassName?: string;
   className?: string;
   autoComplete?: string;
@@ -31,16 +34,20 @@ const Input = ({
   autoComplete = 'off',
   value,
   onChange,
+  onSearch,
   status = 'none',
   errorText,
   clearable = false,
-  icon = 'none',
+  // icon = 'none',
+  leftIcon = 'none',
+  rightIcon = 'none',
   showCheckOnValid = false,
   className,
   containerClassName,
   onClear,
   ...props
 }: InputProps) => {
+  const inputRef = useRef<HTMLInputElement>(null);
   const [showPwd, setShowPwd] = useState(false);
   const isPassword = type === 'password';
   const inputType = isPassword ? (showPwd ? 'text' : 'password') : type;
@@ -64,6 +71,13 @@ const Input = ({
     onChange?.({ target: { value: '' } } as unknown as React.ChangeEvent<HTMLInputElement>);
   };
 
+  // 검색 이벤트
+  const handleSearch = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (onSearch && inputRef.current) {
+      onSearch(inputRef.current.value);
+    }
+  };
+
   // 페스워드 토글 이벤트
   const handlePasswordToggle = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -85,7 +99,25 @@ const Input = ({
       )}
 
       <div className="relative w-full">
+        {/* 왼쪽 아이콘 영역 */}
+        {leftIcon !== 'none' && (
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center pl-6">
+            <button
+              type="button"
+              onClick={handleSearch}
+              disabled={!hasValue}
+              className="cursor-pointer"
+              aria-label="검색하기"
+            >
+              {leftIcon === 'search' && (
+                <Search className="w-[16px] h-[16px] text-neutral-400 hover:text-neutral-600" />
+              )}
+            </button>
+          </div>
+        )}
+
         <input
+          ref={inputRef}
           id={id}
           type={inputType}
           value={value}
@@ -102,7 +134,9 @@ const Input = ({
             'focus:ring-1 focus:ring-component-dark h-[48px]',
             isFocused && isError ? 'border-red-500 focus:ring-red-500' : '',
             isSuccess ? 'border-green-500' : '',
-            icon !== 'none' ? 'pr-12' : '',
+            leftIcon !== 'none' ? 'pl-12' : '',
+            rightIcon !== 'none' ? 'pr-12' : '',
+
             // 커스텀 확장
             className ?? '',
           ].join(' ')}
@@ -110,15 +144,15 @@ const Input = ({
         />
 
         {/* 오른쪽 아이콘 영역 */}
-        {icon !== 'none' && (
+        {rightIcon !== 'none' && (
           <div className="absolute top-1/2 right-7 -translate-y-1/2 flex items-center gap-2">
-            {icon === 'clear' && hasValue && (
+            {rightIcon === 'clear' && hasValue && (
               <button type="button" onClick={handleClear} className="cursor-pointer" aria-label="입력 내용 지우기">
                 <X className="w-[24px] h-[24px] text-neutral-400 hover:text-neutral-600" />
               </button>
             )}
 
-            {icon === 'eye' && (
+            {rightIcon === 'eye' && (
               <button
                 type="button"
                 onClick={handlePasswordToggle}
@@ -132,6 +166,7 @@ const Input = ({
                 )}
               </button>
             )}
+            {status === 'success' && <Check className="w-[24px] h-[24px] text-green-500" />}
           </div>
         )}
       </div>
