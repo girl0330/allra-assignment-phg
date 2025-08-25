@@ -1,3 +1,176 @@
+'use client';
+
+import Input from '@/components/Input';
+import Link from 'next/link';
+import { useState } from 'react';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+
 export default function Home() {
-  return <div>blog list page</div>;
+  const [searchText, setSearchText] = useState('');
+  const [activeTab, setActiveTab] = useState('all');
+  const tabItems = [
+    { value: 'all', label: '전체', content: <div>전체</div> },
+    { value: 'trend', label: '트렌드', content: <div>트렌드</div> },
+    { value: 'tips', label: '운영 팁', content: <div>운영 팁</div> },
+    { value: 'guide', label: '올라가이드', content: <div>올라가이드</div> },
+    { value: 'news', label: '올라소식', content: <div>올라소식</div> },
+    { value: 'case', label: '고객사례', content: <div>고객사례</div> },
+  ];
+
+  return (
+    <div className="py-[24px] md:py-[40px] lg:py-[80px]">
+      <article className="max-md:container">
+        {/* 매인 */}
+        <div>
+          {/* 해더 */}
+          <header className="flex flex-col max-md:gap-8 md:flex-row md:items-center md:justify-between">
+            <h2 className="text-title-3 font-bold text-label-800 md:text-title-2 lg:text-title-1">블로그</h2>
+            <div className="relative">
+              <Input
+                id="search"
+                name="search"
+                type="text"
+                placeholder="검색어를 입력해주세요"
+                labelHidden={false}
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                clearable={false}
+                leftIcon="search"
+                rightIcon="search"
+                className="w-full md:w-[400px] lg:w-[468px]"
+                containerClassName=""
+                onClear={() => {
+                  setSearchText('');
+                }}
+                onSearch={() => {
+                  alert('검색어: ' + searchText);
+                }}
+              />
+            </div>
+          </header>
+
+          {/* 배너 */}
+          <section className="mt-8 md:mt-10">
+            <div className="flex gap-6">
+              <Link className="flex-1" href="/blogs/11">
+                <figure className="relative">
+                  <img alt="블로그 배너 이미지" className="" src="/images/img1.png" />
+                  <p className="absolute bottom-0 left-0 z-10 w-full bg-transparent p-4 line-clamp-2 min-h-[20px] py-[20px] px-[24px] text-Label-100">
+                    여행을 영화처럼 기록하는 이퀄리티의 영상을 공개합니다. 여행을 영화처럼 기록하는 이퀄리티의 영상을
+                    공개합니다.여행을 영화처럼 기록하는 이퀄리티의 영상을 공개합니다. 여행을 영화처럼 기록하는
+                    이퀄리티의 영상을 공개합니다.여행을 영화처럼 기록하는 이퀄리티의 영상을 공개합니다. 여행을 영화처럼
+                    기록하는 이퀄리티의 영상을 공개합니다.
+                  </p>
+                </figure>
+              </Link>
+              <Link className="flex-1" href="/blogs/230">
+                <figure className="relative">
+                  <img alt="블로그 배너 이미지" className="" src="/images/img2.png" />
+                  <p className="absolute bottom-0 left-0 z-10 w-full bg-transparent p-4">
+                    여행을 영화처럼 기록하는 이퀄리티의 영상을 공개합니다. 여행을 영화처럼 기록하는 이퀄리티의 영상을
+                    공개합니다.
+                  </p>
+                </figure>
+              </Link>
+            </div>
+          </section>
+        </div>
+
+        {/* 섹션 */}
+        <section className="mt-8 md:mt-10 lg:mt-11 flex flex-col gap-[40px]">
+          {/* 탭 */}
+          <div className="scrollbar-hide flex items-center border-b border-b-line-200">
+            {tabItems.map((tab) => {
+              const isActive = activeTab === tab.value;
+
+              return (
+                <div className="" key={tab.value}>
+                  <button
+                    onClick={() => {
+                      setActiveTab(tab.value);
+                      alert(tab.value);
+                    }}
+                    className={`text-body-1 whitespace-nowrap py-[15px] px-5 relative cursor-pointer ${
+                      isActive
+                        ? 'text-label-900 font-semibold border-b-1 border-label-900'
+                        : 'text-label-500 font-normal'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* 카드 컨텐츠 */}
+          <div className="gap-[48px] flex flex-col">
+            {/* 카드 영역 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-12 gap-x-6">
+              {Array.from({ length: 12 }).map((_, idx) => (
+                <div key={idx} className="border rounded-2xl flex flex-col gap-4">
+                  <img alt="블로그 카드 이미지" className="" src="/images/img2.png" />
+                  <div>
+                    <div className="gap-[8px] border">
+                      <h3>블로그 카드 제목</h3>
+                      <p>블로그 카드 내용</p>
+                    </div>
+                    <p>블로그 카드 업로드 날짜</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* 페이징 */}
+            <div className="flex w-full flex-wrap items-center justify-center gap-6 text-body-2 mt-9 md:mt-10 lg:mt-11">
+              {/* Prev buttons */}
+              <div className="flex items-center gap-4">
+                <button
+                  className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed disabled:text-status-disable h-[40px] gap-3 rounded-md text-body-2 font-semibold px-0"
+                  disabled
+                >
+                  <span>
+                    <ChevronsLeft />
+                  </span>
+                </button>
+                <button
+                  className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed disabled:text-status-disable h-[40px] gap-3 rounded-md text-body-2 font-semibold px-0"
+                  disabled
+                >
+                  <span>
+                    <ChevronLeft />
+                  </span>
+                </button>
+              </div>
+              {/* Page numbers */}
+              <div className="flex items-center gap-1">
+                {[1, 2, 3, 4, 5].map((num, idx) => (
+                  <div key={num}>
+                    <button
+                      className={`inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed disabled:text-status-disable h-[40px] gap-3 px-6 text-body-2 !size-9 rounded-full md:size-10 ${
+                        num === 1
+                          ? 'bg-component-alternative font-bold text-label-900 hover:bg-component-alternative'
+                          : 'font-medium text-label-700 hover:bg-label-100 hover:text-label-700'
+                      }`}
+                    >
+                      <span className="translate-y-px text-body-3 md:text-body-2">{num}</span>
+                    </button>
+                  </div>
+                ))}
+              </div>
+              {/* Next buttons */}
+              <div className="flex items-center gap-4">
+                <button className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed disabled:text-status-disable h-[40px] gap-3 rounded-md text-body-2 font-semibold px-0">
+                  <ChevronRight />
+                </button>
+                <button className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed disabled:text-status-disable h-[40px] gap-3 rounded-md text-body-2 font-semibold px-0">
+                  <ChevronsRight />
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </article>
+    </div>
+  );
 }
