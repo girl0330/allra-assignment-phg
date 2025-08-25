@@ -11,6 +11,7 @@ export default function StyleGuidePage() {
   const [businessNo, setBussinessNo] = useState('');
   const [password, setPassword] = useState('');
   const [inputText, setInputText] = useState('');
+  const [searchText, setSearchText] = useState('');
 
   return (
     <div>
@@ -78,11 +79,30 @@ export default function StyleGuidePage() {
 
       <div className="flex flex-col gap-6">
         <Input
+          id="search"
+          name="search"
+          labelHidden={true}
+          leftIcon="search"
+          rightIcon="clear"
+          type="text"
+          placeholder="검색어를 입력해주세요."
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          clearable
+          onClear={() => {
+            setSearchText('');
+          }}
+          onSearch={() => {
+            alert('검색어: ' + searchText);
+          }}
+        />
+
+        <Input
           id="password"
           name="password"
           labelText="비밀번호"
           labelHidden={false}
-          icon="eye"
+          rightIcon="eye"
           type="password"
           placeholder="비밀번호를 입력해주세요."
           autoComplete="current-password"
@@ -99,7 +119,7 @@ export default function StyleGuidePage() {
           autoComplete="username"
           type="text"
           labelText="사업자등록번호"
-          icon="clear"
+          rightIcon="clear"
           value={businessNo}
           onChange={(e) => {
             setBussinessNo(e.target.value);
