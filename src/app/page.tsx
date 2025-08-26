@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { BlogCategory, BlogListParams, BlogListResponse, fetchBlogs } from '@/lib/api/blog';
+import { BlogCategory, BlogCategoryFilter, BlogListParams, BlogListResponse, fetchBlogs } from '@/lib/api/blog';
 
 // 데이터 패칭
 export const useBlogs = (params: BlogListParams) => {
@@ -16,8 +16,8 @@ export const useBlogs = (params: BlogListParams) => {
   });
 };
 
-const categories: { label: string; value?: BlogCategory }[] = [
-  { label: '전체' },
+const categories: { label: string; value: BlogCategoryFilter }[] = [
+  { label: '전체', value: 'ALL' },
   { label: '올라소식', value: 'NEWS' },
   { label: '운영 팁', value: 'TIP' },
   { label: '올라가이드', value: 'GUIDE' },
@@ -26,7 +26,7 @@ const categories: { label: string; value?: BlogCategory }[] = [
 
 export default function BlogListPage() {
   const [term, setTerm] = useState('');
-  const [activeTab, setActiveTab] = useState('all');
+  const [activeTab, setActiveTab] = useState<BlogCategoryFilter>('ALL');
   const [page, setPage] = useState(1);
   const [pageSize] = useState(12);
   const [category, setCategory] = useState<BlogCategory | undefined>(undefined);
@@ -101,7 +101,7 @@ export default function BlogListPage() {
         <section className="mt-8 md:mt-10 lg:mt-11 flex flex-col gap-[40px]">
           {/* 탭 */}
           <div className="scrollbar-hide flex items-center border-b border-b-line-200">
-            {tabItems.map((tab) => {
+            {categories.map((tab) => {
               const isActive = activeTab === tab.value;
 
               return (
@@ -112,9 +112,7 @@ export default function BlogListPage() {
                       alert(tab.value);
                     }}
                     className={`text-body-1 whitespace-nowrap py-[15px] px-5 relative cursor-pointer ${
-                      isActive
-                        ? 'text-label-900 font-semibold border-b-1 border-label-900'
-                        : 'text-label-500 font-normal'
+                      isActive ? 'text-label-900 font-semibold border-b border-label-900' : 'text-label-500 font-normal'
                     }`}
                   >
                     {tab.label}
