@@ -22,7 +22,7 @@ export const useBlogs = (params: BlogListParams) => {
     queryKey: ['blogs', params],
     queryFn: () => fetchBlogs(params),
     staleTime: 60 * 1000,
-    placeholderData: keepPreviousData, // 페이지 전환 깜빡임 완화
+    placeholderData: keepPreviousData,
   });
 };
 
@@ -43,7 +43,7 @@ const categories: { label: string; value: BlogCategoryFilter }[] = [
   { label: '경험담', value: 'EXPERIENCE' },
 ];
 
-/* ----------------------------- 날짜 포맷 유틸 ----------------------------- formateData*/
+/* ----------------------------- 날짜 포맷 유틸 ----------------------------- */
 function formatDate(dateString: string) {
   const data = new Date(dateString);
   return new Intl.DateTimeFormat('ko-KR', {
@@ -77,13 +77,15 @@ export default function BlogListPage() {
   // 데이터 패칭
   const { data: bannerData, isLoading: isBannerLoading, isError: isBannerError, error: bannerError } = useBanners();
 
+  const effectiveCategory = term ? undefined : category;
+
   const {
     data: blogData,
     isLoading: isBlogLoading,
     isError: isBlogError,
     error: blogError,
     isFetching: isBlogFetching,
-  } = useBlogs({ page, pageSize, category, term });
+  } = useBlogs({ page, pageSize, category: effectiveCategory, term });
 
   // BlogListResponse 타입으로 data를 받음
   const blogs = blogData?.list || [];
@@ -164,6 +166,8 @@ export default function BlogListPage() {
                 onSearch={() => {
                   const next = inputValue.trim();
                   setTerm(next);
+                  setCategory(undefined);
+                  setActiveTab('ALL');
                   setPage(1);
                 }}
               />
@@ -222,98 +226,106 @@ export default function BlogListPage() {
             })}
           </div>
 
-          {/* 카드 컨텐츠 */}
-          <div className="gap-[48px] flex flex-col">
-            {/* 카드 영역 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-12 gap-x-6">
-              {isBlogLoading ? (
-                // 배너만 스켈레톤
-                <div className="h-40 w-full animate-pulse rounded-xl bg-label-100" />
-              ) : (
-                blogs.map((blog) => (
-                  <Link
-                    key={blog.id}
-                    href={`/blogs/${blog.id}`}
-                    className="border rounded-2xl flex flex-col gap-4 aspect-[2/1] cursor-pointer"
-                  >
-                    <img alt="블로그 카드 이미지" className="object-cover" src={blog.thumbnail} />
-                    <div>
-                      <div className="gap-[8px] border">
-                        <h3>{blog.category}</h3>
-                        <p>{blog.title}</p>
+          <div className="flex flex-col gap-[56px]">
+            {/* 검색 결과 문구 */}
+            {term && (
+              <div className="text-body-3 text-label-500 font-medium">
+                '{term}'에 대한 {blogData?.totalCount}개의 검색결과
+              </div>
+            )}
+            {/* 카드 컨텐츠 */}
+            <div className="gap-[48px] flex flex-col">
+              {/* 카드 영역 */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-12 gap-x-6">
+                {isBlogLoading ? (
+                  // 배너만 스켈레톤
+                  <div className="h-40 w-full animate-pulse rounded-xl bg-label-100" />
+                ) : (
+                  blogs.map((blog) => (
+                    <Link
+                      key={blog.id}
+                      href={`/blogs/${blog.id}`}
+                      className="border rounded-2xl flex flex-col gap-4 aspect-[2/1] cursor-pointer"
+                    >
+                      <img alt="블로그 카드 이미지" className="object-cover" src={blog.thumbnail} />
+                      <div>
+                        <div className="gap-[8px] border">
+                          <h3>{blog.category}</h3>
+                          <p>{blog.title}</p>
+                        </div>
+                        <p>{formatDate(blog.createdAt)}</p>
                       </div>
-                      <p>{formatDate(blog.createdAt)}</p>
-                    </div>
-                  </Link>
-                ))
-              )}
-            </div>
+                    </Link>
+                  ))
+                )}
+              </div>
 
-            {/* 페이징 */}
-            <div className="flex w-full flex-wrap items-center justify-center gap-6 text-body-2 mt-9 md:mt-10 lg:mt-11">
-              {/* Prev buttons */}
-              <div className="flex items-center gap-4">
-                <button
-                  type="button"
-                  onClick={goPrevChunk}
-                  disabled={!canPrev}
-                  className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed disabled:text-status-disable h-[40px] gap-3 rounded-md text-body-2 font-semibold px-0"
-                >
-                  <span>
-                    <ChevronsLeft />
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  onClick={goPrev}
-                  disabled={!canPrev}
-                  className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed disabled:text-status-disable h-[40px] gap-3 rounded-md text-body-2 font-semibold px-0"
-                >
-                  <span>
-                    <ChevronLeft />
-                  </span>
-                </button>
-              </div>
-              {/* Page numbers */}
-              <div className="flex items-center gap-1">
-                {pageNumbers.map((num) => {
-                  const active = num === page;
-                  return (
-                    <div key={num}>
-                      <button
-                        key={num}
-                        type="button"
-                        onClick={() => goPage(num)}
-                        className={`inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed disabled:text-status-disable h-[40px] gap-3 px-6 text-body-2 !size-9 rounded-full md:size-10 ${
-                          active
-                            ? 'bg-component-alternative font-bold text-label-900 hover:bg-component-alternative'
-                            : 'font-medium text-label-700 hover:bg-label-100 hover:text-label-700'
-                        }`}
-                      >
-                        <span className="translate-y-px text-body-3 md:text-body-2">{num}</span>
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-              {/* Next buttons */}
-              <div className="flex items-center gap-4">
-                <button
-                  type="button"
-                  onClick={goNext}
-                  disabled={!canNext}
-                  className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed disabled:text-status-disable h-[40px] gap-3 rounded-md text-body-2 font-semibold px-0"
-                >
-                  <ChevronRight />
-                </button>
-                <button
-                  type="button"
-                  onClick={goNextChunk}
-                  disabled={!canNext}
-                  className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed disabled:text-status-disable h-[40px] gap-3 rounded-md text-body-2 font-semibold px-0"
-                >
-                  <ChevronsRight />
-                </button>
+              {/* 페이징 */}
+              <div className="flex w-full flex-wrap items-center justify-center gap-6 text-body-2 mt-9 md:mt-10 lg:mt-11">
+                {/* Prev buttons */}
+                <div className="flex items-center gap-4">
+                  <button
+                    type="button"
+                    onClick={goPrevChunk}
+                    disabled={!canPrev}
+                    className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed disabled:text-status-disable h-[40px] gap-3 rounded-md text-body-2 font-semibold px-0"
+                  >
+                    <span>
+                      <ChevronsLeft />
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={goPrev}
+                    disabled={!canPrev}
+                    className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed disabled:text-status-disable h-[40px] gap-3 rounded-md text-body-2 font-semibold px-0"
+                  >
+                    <span>
+                      <ChevronLeft />
+                    </span>
+                  </button>
+                </div>
+                {/* Page numbers */}
+                <div className="flex items-center gap-1">
+                  {pageNumbers.map((num) => {
+                    const active = num === page;
+                    return (
+                      <div key={num}>
+                        <button
+                          key={num}
+                          type="button"
+                          onClick={() => goPage(num)}
+                          className={`inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed disabled:text-status-disable h-[40px] gap-3 px-6 text-body-2 !size-9 rounded-full md:size-10 ${
+                            active
+                              ? 'bg-component-alternative font-bold text-label-900 hover:bg-component-alternative'
+                              : 'font-medium text-label-700 hover:bg-label-100 hover:text-label-700'
+                          }`}
+                        >
+                          <span className="translate-y-px text-body-3 md:text-body-2">{num}</span>
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+                {/* Next buttons */}
+                <div className="flex items-center gap-4">
+                  <button
+                    type="button"
+                    onClick={goNext}
+                    disabled={!canNext}
+                    className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed disabled:text-status-disable h-[40px] gap-3 rounded-md text-body-2 font-semibold px-0"
+                  >
+                    <ChevronRight />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={goNextChunk}
+                    disabled={!canNext}
+                    className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed disabled:text-status-disable h-[40px] gap-3 rounded-md text-body-2 font-semibold px-0"
+                  >
+                    <ChevronsRight />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
