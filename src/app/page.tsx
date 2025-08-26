@@ -38,11 +38,49 @@ export default function BlogListPage() {
     term: term,
   });
 
-  // ✅ BlogListResponse 타입으로 data를 받음
+  // BlogListResponse 타입으로 data를 받음
   const blogs = data?.list || [];
   const totalCount = data?.totalCount || 0;
   const totalPages = data?.totalPages || 1;
   const currentPage = data?.page || 1;
+
+  const pageNumbers = getPageNumbers(currentPage, totalPages, 5);
+  const canPrev = currentPage > 1;
+  const canNext = currentPage < totalPages;
+
+  function goPrev() {
+    if (canPrev) setPage((p) => Math.max(1, p - 1));
+  }
+  function goNext() {
+    if (canNext) setPage((p) => Math.min(totalPages, p + 1));
+  }
+  function goPrevChunk() {
+    if (!canPrev || pageNumbers.length === 0) return;
+    const start = pageNumbers[0];
+    const target = Math.max(1, start - 5);
+    setPage(target);
+  }
+  function goNextChunk() {
+    if (!canNext || pageNumbers.length === 0) return;
+    const end = pageNumbers[pageNumbers.length - 1];
+    const target = Math.min(totalPages, end + 1);
+    setPage(target);
+  }
+  function goPage(n: number) {
+    const clamped = Math.max(1, Math.min(totalPages, n));
+    setPage(clamped);
+  }
+
+  // 탭 변경 → 1페이지로
+  function handleTabChange(next: BlogCategoryFilter) {
+    setActiveTab(next);
+    setPage(1);
+  }
+
+  // 검색은 엔터/버튼에서 트리거하고 1페이지로
+  function handleSearch() {
+    setPage(1);
+  }
 
   return (
     <div className="py-[24px] md:py-[40px] lg:py-[80px]">
@@ -157,16 +195,20 @@ export default function BlogListPage() {
               {/* Prev buttons */}
               <div className="flex items-center gap-4">
                 <button
+                  type="button"
+                  onClick={goPrevChunk}
+                  disabled={!canPrev}
                   className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed disabled:text-status-disable h-[40px] gap-3 rounded-md text-body-2 font-semibold px-0"
-                  disabled
                 >
                   <span>
                     <ChevronsLeft />
                   </span>
                 </button>
                 <button
+                  type="button"
+                  onClick={goPrev}
+                  disabled={!canPrev}
                   className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed disabled:text-status-disable h-[40px] gap-3 rounded-md text-body-2 font-semibold px-0"
-                  disabled
                 >
                   <span>
                     <ChevronLeft />
@@ -175,26 +217,42 @@ export default function BlogListPage() {
               </div>
               {/* Page numbers */}
               <div className="flex items-center gap-1">
-                {[1, 2, 3, 4, 5].map((num, idx) => (
-                  <div key={num}>
-                    <button
-                      className={`inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed disabled:text-status-disable h-[40px] gap-3 px-6 text-body-2 !size-9 rounded-full md:size-10 ${
-                        num === 1
-                          ? 'bg-component-alternative font-bold text-label-900 hover:bg-component-alternative'
-                          : 'font-medium text-label-700 hover:bg-label-100 hover:text-label-700'
-                      }`}
-                    >
-                      <span className="translate-y-px text-body-3 md:text-body-2">{num}</span>
-                    </button>
-                  </div>
-                ))}
+                {pageNumbers.map((num) => {
+                  const active = num === currentPage;
+                  return (
+                    <div key={num}>
+                      <button
+                        key={num}
+                        type="button"
+                        onClick={() => goPage(num)}
+                        className={`inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed disabled:text-status-disable h-[40px] gap-3 px-6 text-body-2 !size-9 rounded-full md:size-10 ${
+                          active
+                            ? 'bg-component-alternative font-bold text-label-900 hover:bg-component-alternative'
+                            : 'font-medium text-label-700 hover:bg-label-100 hover:text-label-700'
+                        }`}
+                      >
+                        <span className="translate-y-px text-body-3 md:text-body-2">{num}</span>
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
               {/* Next buttons */}
               <div className="flex items-center gap-4">
-                <button className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed disabled:text-status-disable h-[40px] gap-3 rounded-md text-body-2 font-semibold px-0">
+                <button
+                  type="button"
+                  onClick={goNext}
+                  disabled={!canNext}
+                  className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed disabled:text-status-disable h-[40px] gap-3 rounded-md text-body-2 font-semibold px-0"
+                >
                   <ChevronRight />
                 </button>
-                <button className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed disabled:text-status-disable h-[40px] gap-3 rounded-md text-body-2 font-semibold px-0">
+                <button
+                  type="button"
+                  onClick={goNextChunk}
+                  disabled={!canNext}
+                  className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed disabled:text-status-disable h-[40px] gap-3 rounded-md text-body-2 font-semibold px-0"
+                >
                   <ChevronsRight />
                 </button>
               </div>
@@ -215,4 +273,23 @@ function formateData(dateString: string) {
   })
     .format(data)
     .replace(/\.$/, '');
+}
+
+// 현재 page를 중심으로 최대 n개 버튼 계산
+function getPageNumbers(page: number, total: number, chunkSize: number = 5) {
+  if (total <= 0) return [];
+
+  // 현재 page가 속한 묶음 index (0부터 시작)
+  var chunkIndex = Math.floor((page - 1) / chunkSize);
+
+  // 묶음의 시작 번호
+  var start = chunkIndex * chunkSize + 1;
+
+  // 묶음의 끝 번호 (total을 넘지 않도록 보정)
+  var end = Math.min(total, start + chunkSize - 1);
+
+  var arr: number[] = [];
+  for (var i = start; i <= end; i++) arr.push(i);
+
+  return arr;
 }
