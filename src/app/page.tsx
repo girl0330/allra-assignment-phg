@@ -67,13 +67,12 @@ function getPageNumbers(page: number, total: number, chunkSize: number = 5) {
 }
 
 export default function BlogListPage() {
+  const [inputValue, setInputValue] = useState('');
   const [term, setTerm] = useState('');
   const [activeTab, setActiveTab] = useState<BlogCategoryFilter>('ALL');
   const [page, setPage] = useState(1);
   const [pageSize] = useState(12);
-
-  // const [category, setCategory] = useState<BlogCategory | undefined>(undefined);
-  const category: BlogCategory | undefined = activeTab === 'ALL' ? undefined : (activeTab as BlogCategory);
+  const [category, setCategory] = useState<BlogCategory | undefined>(undefined);
 
   // 데이터 패칭
   const { data: bannerData, isLoading: isBannerLoading, isError: isBannerError, error: bannerError } = useBanners();
@@ -93,9 +92,9 @@ export default function BlogListPage() {
   const currentPage = blogData?.page || 1;
 
   // --- 페이지네이션 상태/동작 ---
-  const pageNumbers = getPageNumbers(currentPage, totalPages, 5);
-  const canPrev = currentPage > 1;
-  const canNext = currentPage < totalPages;
+  const pageNumbers = getPageNumbers(page, totalPages, 5);
+  const canPrev = page > 1;
+  const canNext = page < totalPages;
 
   function goPrev() {
     if (canPrev) setPage((p) => Math.max(1, p - 1));
@@ -150,18 +149,22 @@ export default function BlogListPage() {
                 type="text"
                 placeholder="검색어를 입력해주세요"
                 labelHidden={false}
-                value={term}
-                onChange={(e) => setTerm(e.target.value)}
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
                 clearable={false}
                 leftIcon="search"
-                rightIcon="search"
+                rightIcon="clear"
                 className="w-full md:w-[400px] lg:w-[468px]"
                 containerClassName=""
                 onClear={() => {
+                  setInputValue('');
                   setTerm('');
+                  setPage(1);
                 }}
                 onSearch={() => {
-                  alert('검색어: ' + term);
+                  const next = inputValue.trim();
+                  setTerm(next);
+                  setPage(1);
                 }}
               />
             </div>
@@ -203,7 +206,10 @@ export default function BlogListPage() {
                   <button
                     onClick={() => {
                       setActiveTab(tab.value);
-                      alert(tab.value);
+                      setCategory(tab.value === 'ALL' ? undefined : (tab.value as BlogCategory));
+                      handleTabChange(tab.value);
+                      setInputValue('');
+                      setTerm('');
                     }}
                     className={`text-body-1 whitespace-nowrap py-[15px] px-5 relative cursor-pointer ${
                       isActive ? 'text-label-900 font-semibold border-b border-label-900' : 'text-label-500 font-normal'
@@ -220,7 +226,7 @@ export default function BlogListPage() {
           <div className="gap-[48px] flex flex-col">
             {/* 카드 영역 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-12 gap-x-6">
-              {isBannerLoading ? (
+              {isBlogLoading ? (
                 // 배너만 스켈레톤
                 <div className="h-40 w-full animate-pulse rounded-xl bg-label-100" />
               ) : (
@@ -267,7 +273,7 @@ export default function BlogListPage() {
               {/* Page numbers */}
               <div className="flex items-center gap-1">
                 {pageNumbers.map((num) => {
-                  const active = num === currentPage;
+                  const active = num === page;
                   return (
                     <div key={num}>
                       <button
