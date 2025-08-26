@@ -7,7 +7,7 @@ import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-r
 import { useQuery } from '@tanstack/react-query';
 import { BlogCategory, BlogCategoryFilter, BlogListParams, BlogListResponse, fetchBlogs } from '@/lib/api/blog';
 
-// 데이터 패칭
+/* ----------------------------- React Query 훅 ----------------------------- */
 export const useBlogs = (params: BlogListParams) => {
   return useQuery<BlogListResponse, Error>({
     queryKey: ['blogs', params],
@@ -16,6 +16,7 @@ export const useBlogs = (params: BlogListParams) => {
   });
 };
 
+/* ----------------------------- 탭 정의 ----------------------------- */
 const categories: { label: string; value: BlogCategoryFilter }[] = [
   { label: '전체', value: 'ALL' },
   { label: '올라소식', value: 'NEWS' },
@@ -24,6 +25,29 @@ const categories: { label: string; value: BlogCategoryFilter }[] = [
   { label: '경험담', value: 'EXPERIENCE' },
 ];
 
+/* ----------------------------- 날짜 포맷 유틸 ----------------------------- formateData*/
+function formatDate(dateString: string) {
+  const data = new Date(dateString);
+  return new Intl.DateTimeFormat('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  })
+    .format(data)
+    .replace(/\.$/, '');
+}
+
+// 항상 5개 묶음 기준으로 현재 묶음 페이지 배열 계산
+function getPageNumbers(page: number, total: number, chunkSize: number = 5) {
+  if (total <= 0) return [];
+  var chunkIndex = Math.floor((page - 1) / chunkSize);
+  var start = chunkIndex * chunkSize + 1;
+  var end = Math.min(total, start + chunkSize - 1);
+  var arr: number[] = [];
+  for (var i = start; i <= end; i++) arr.push(i);
+  return arr;
+}
+
 export default function BlogListPage() {
   const [term, setTerm] = useState('');
   const [activeTab, setActiveTab] = useState<BlogCategoryFilter>('ALL');
@@ -31,6 +55,7 @@ export default function BlogListPage() {
   const [pageSize] = useState(12);
   const [category, setCategory] = useState<BlogCategory | undefined>(undefined);
 
+  // 데이터 패칭
   const { data, isLoading, isError } = useBlogs({
     page: page,
     pageSize: pageSize,
@@ -44,6 +69,7 @@ export default function BlogListPage() {
   const totalPages = data?.totalPages || 1;
   const currentPage = data?.page || 1;
 
+  // --- 페이지네이션 상태/동작 ---
   const pageNumbers = getPageNumbers(currentPage, totalPages, 5);
   const canPrev = currentPage > 1;
   const canNext = currentPage < totalPages;
@@ -184,7 +210,7 @@ export default function BlogListPage() {
                       <h3>{blog.category}</h3>
                       <p>{blog.title}</p>
                     </div>
-                    <p>{formateData(blog.createdAt)}</p>
+                    <p>{formatDate(blog.createdAt)}</p>
                   </div>
                 </div>
               ))}
@@ -262,34 +288,4 @@ export default function BlogListPage() {
       </article>
     </div>
   );
-}
-
-function formateData(dateString: string) {
-  const data = new Date(dateString);
-  return new Intl.DateTimeFormat('ko-KR', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  })
-    .format(data)
-    .replace(/\.$/, '');
-}
-
-// 현재 page를 중심으로 최대 n개 버튼 계산
-function getPageNumbers(page: number, total: number, chunkSize: number = 5) {
-  if (total <= 0) return [];
-
-  // 현재 page가 속한 묶음 index (0부터 시작)
-  var chunkIndex = Math.floor((page - 1) / chunkSize);
-
-  // 묶음의 시작 번호
-  var start = chunkIndex * chunkSize + 1;
-
-  // 묶음의 끝 번호 (total을 넘지 않도록 보정)
-  var end = Math.min(total, start + chunkSize - 1);
-
-  var arr: number[] = [];
-  for (var i = start; i <= end; i++) arr.push(i);
-
-  return arr;
 }
