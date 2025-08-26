@@ -4,18 +4,39 @@ import Input from '@/components/Input';
 import Link from 'next/link';
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { BlogCategory, BlogListParams, BlogListResponse, fetchBlogs } from '@/lib/api/blog';
 
-export default function Home() {
-  const [searchText, setSearchText] = useState('');
+// 데이터 패칭
+export const useBlogs = (params: BlogListParams) => {
+  return useQuery<BlogListResponse, Error>({
+    queryKey: ['blogs', params],
+    queryFn: () => fetchBlogs(params),
+    staleTime: 60 * 1000,
+  });
+};
+
+const categories: { label: string; value?: BlogCategory }[] = [
+  { label: '전체' },
+  { label: '올라소식', value: 'NEWS' },
+  { label: '운영 팁', value: 'TIP' },
+  { label: '올라가이드', value: 'GUIDE' },
+  { label: '경험담', value: 'EXPERIENCE' },
+];
+
+export default function BlogListPage() {
+  const [term, setTerm] = useState('');
   const [activeTab, setActiveTab] = useState('all');
-  const tabItems = [
-    { value: 'all', label: '전체', content: <div>전체</div> },
-    { value: 'trend', label: '트렌드', content: <div>트렌드</div> },
-    { value: 'tips', label: '운영 팁', content: <div>운영 팁</div> },
-    { value: 'guide', label: '올라가이드', content: <div>올라가이드</div> },
-    { value: 'news', label: '올라소식', content: <div>올라소식</div> },
-    { value: 'case', label: '고객사례', content: <div>고객사례</div> },
-  ];
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(12);
+  const [category, setCategory] = useState<BlogCategory | undefined>(undefined);
+
+  const { data, isLoading, isError, error } = useBlogs({
+    page: page,
+    pageSize: pageSize,
+    category: category,
+    term: term,
+  });
 
   return (
     <div className="py-[24px] md:py-[40px] lg:py-[80px]">
@@ -27,13 +48,13 @@ export default function Home() {
             <h2 className="text-title-3 font-bold text-label-800 md:text-title-2 lg:text-title-1">블로그</h2>
             <div className="relative">
               <Input
-                id="search"
-                name="search"
+                id="searchTerm"
+                name="searchTerm"
                 type="text"
                 placeholder="검색어를 입력해주세요"
                 labelHidden={false}
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
+                value={term}
+                onChange={(e) => setTerm(e.target.value)}
                 clearable={false}
                 leftIcon="search"
                 rightIcon="search"
