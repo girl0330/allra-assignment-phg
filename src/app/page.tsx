@@ -31,12 +31,18 @@ export default function BlogListPage() {
   const [pageSize] = useState(12);
   const [category, setCategory] = useState<BlogCategory | undefined>(undefined);
 
-  const { data, isLoading, isError, error } = useBlogs({
+  const { data, isLoading, isError } = useBlogs({
     page: page,
     pageSize: pageSize,
     category: category,
     term: term,
   });
+
+  // ✅ BlogListResponse 타입으로 data를 받음
+  const blogs = data?.list || [];
+  const totalCount = data?.totalCount || 0;
+  const totalPages = data?.totalPages || 1;
+  const currentPage = data?.page || 1;
 
   return (
     <div className="py-[24px] md:py-[40px] lg:py-[80px]">
@@ -61,10 +67,10 @@ export default function BlogListPage() {
                 className="w-full md:w-[400px] lg:w-[468px]"
                 containerClassName=""
                 onClear={() => {
-                  setSearchText('');
+                  setTerm('');
                 }}
                 onSearch={() => {
-                  alert('검색어: ' + searchText);
+                  alert('검색어: ' + term);
                 }}
               />
             </div>
@@ -132,15 +138,15 @@ export default function BlogListPage() {
           <div className="gap-[48px] flex flex-col">
             {/* 카드 영역 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-12 gap-x-6">
-              {Array.from({ length: 12 }).map((_, idx) => (
+              {blogs.map((blog, idx) => (
                 <div key={idx} className="border rounded-2xl flex flex-col gap-4 aspect-[2/1]">
-                  <img alt="블로그 카드 이미지" className="object-cover" src="/images/img2.png" />
+                  <img alt="블로그 카드 이미지" className="object-cover" src={blog.thumbnail} />
                   <div>
                     <div className="gap-[8px] border">
-                      <h3>블로그 카드 제목</h3>
-                      <p>블로그 카드 내용</p>
+                      <h3>{blog.category}</h3>
+                      <p>{blog.title}</p>
                     </div>
-                    <p>블로그 카드 업로드 날짜</p>
+                    <p>{blog.createdAt}</p>
                   </div>
                 </div>
               ))}
