@@ -4,7 +4,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: React.ReactNode;
 }
 
-const ButtonTest = ({ children, type = 'button', className = '', icon, ...props }: ButtonProps) => {
+const Button = ({ children, type = 'button', className = '', icon, ...props }: ButtonProps) => {
   return (
     <div>
       <button
@@ -21,4 +21,4 @@ const ButtonTest = ({ children, type = 'button', className = '', icon, ...props 
   );
 };
 
-export default ButtonTest;
+export default Button;
