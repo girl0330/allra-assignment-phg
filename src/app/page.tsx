@@ -146,7 +146,7 @@ export default function BlogListPage() {
                       <h3>{blog.category}</h3>
                       <p>{blog.title}</p>
                     </div>
-                    <p>{blog.createdAt}</p>
+                    <p>{formateData(blog.createdAt)}</p>
                   </div>
                 </div>
               ))}
@@ -204,4 +204,15 @@ export default function BlogListPage() {
       </article>
     </div>
   );
+}
+
+function formateData(dateString: string) {
+  const data = new Date(dateString);
+  return new Intl.DateTimeFormat('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  })
+    .format(data)
+    .replace(/\.$/, '');
 }
