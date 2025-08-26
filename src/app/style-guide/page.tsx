@@ -3,7 +3,8 @@ import { Link2 } from 'lucide-react';
 
 import Input from '@/components/Input';
 import { useState } from 'react';
-import ButtonTest from '@/components/Button';
+import Modal from '@/components/Modal';
+import Button from '@/components/Button';
 
 type Swatch = { name: string; className: string; text?: string };
 
@@ -12,6 +13,7 @@ export default function StyleGuidePage() {
   const [password, setPassword] = useState('');
   const [inputText, setInputText] = useState('');
   const [searchText, setSearchText] = useState('');
+  const [open, setOpen] = useState(false);
 
   return (
     <div>
@@ -20,13 +22,28 @@ export default function StyleGuidePage() {
         프로젝트에서 공통으로 사용하는 컬러, 타이포그래피, 컴포넌트, 레이아웃 샘플
       </p>
       <div className="space-y-10 flex flex-colum">
-        <ButtonTest className="">내가 만드는 버튼test</ButtonTest>
+        <Button onClick={() => setOpen(true)} className="">
+          내가 만드는 버튼test
+        </Button>
         {/* 텍스트만 있는 버튼 */}
-        <ButtonTest>회원가입test</ButtonTest>
+        <Button>회원가입test</Button>
 
         {/* 아이콘이 있는 버튼 */}
-        <ButtonTest icon={<Link2 size={20} />}>공유하기test</ButtonTest>
+        <Button icon={<Link2 size={20} />}>공유하기test</Button>
       </div>
+
+      {/* 모달 컴포넌트  */}
+      <Modal open={open} onClose={() => setOpen(false)}>
+        <div className="flex flex-col gap-[10px]">
+          <h2 className="text-label-900 text-title-3 font-bold ">올라 가입을 환영합니다 🎉</h2>
+          <p className="text-label-700 text-body-2 font-regular">
+            이제 첫 정산을 신청해보세요!
+            <br />
+            정산금을 <strong className="text-secondary-400">30초만에 조회</strong>하고,{' '}
+            <strong className="text-secondary-400">바로 신청</strong>할 수 있어요.
+          </p>
+        </div>
+      </Modal>
 
       <div className="space-y-10">
         <button className="inline-flex items-center justify-center whitespace-nowrap cursor-pointer disabled:cursor-not-allowed border bg-background-default text-label-800 hover:bg-label-100 active:bg-background-alternative disabled:border-line-400 disabled:text-status-disable h-[48px] gap-4 rounded-lg px-6 text-body-1 font-semibold">
