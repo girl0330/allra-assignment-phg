@@ -74,23 +74,29 @@ export default function BlogListPage() {
           <section className="mt-8 md:mt-10">
             <div className="flex gap-6">
               <Link className="flex-1" href="/blogs/11">
-                <figure className="relative">
-                  <img alt="블로그 배너 이미지" className="" src="/images/img1.png" />
-                  <p className="absolute bottom-0 left-0 z-10 w-full bg-transparent p-4 line-clamp-2 min-h-[20px] py-[20px] px-[24px] text-Label-100">
-                    여행을 영화처럼 기록하는 이퀄리티의 영상을 공개합니다. 여행을 영화처럼 기록하는 이퀄리티의 영상을
-                    공개합니다.여행을 영화처럼 기록하는 이퀄리티의 영상을 공개합니다. 여행을 영화처럼 기록하는
-                    이퀄리티의 영상을 공개합니다.여행을 영화처럼 기록하는 이퀄리티의 영상을 공개합니다. 여행을 영화처럼
-                    기록하는 이퀄리티의 영상을 공개합니다.
-                  </p>
+                <figure className="relative aspect-[2/1]">
+                  <img alt="블로그 배너 이미지" className="object-cover" src="/images/img1.png" />
+                  <div className="absolute inset-x-0 bottom-0 z-10 px-6 py-5">
+                    <p className="line-clamp-2 overflow-hidden break-words [display:-webkit-box] [-webkit-box-orient:vertical]">
+                      여행을 영화처럼 기록하는 이퀄리티의 영상을 공개합니다. 여행을 영화처럼 기록하는 이퀄리티의 영상을
+                      공개합니다.여행을 영화처럼 기록하는 이퀄리티의 영상을 공개합니다. 여행을 영화처럼 기록하는
+                      이퀄리티의 영상을 공개합니다.여행을 영화처럼 기록하는 이퀄리티의 영상을 공개합니다. 여행을
+                      영화처럼 기록하는 이퀄리티의 영상을 공개합니다.
+                    </p>
+                  </div>
                 </figure>
               </Link>
               <Link className="flex-1" href="/blogs/230">
-                <figure className="relative">
-                  <img alt="블로그 배너 이미지" className="" src="/images/img2.png" />
-                  <p className="absolute bottom-0 left-0 z-10 w-full bg-transparent p-4">
-                    여행을 영화처럼 기록하는 이퀄리티의 영상을 공개합니다. 여행을 영화처럼 기록하는 이퀄리티의 영상을
-                    공개합니다.
-                  </p>
+                <figure className="relative aspect-[2/1]">
+                  <img alt="블로그 배너 이미지" className="object-cover" src="/images/img2.png" />
+                  <div className="absolute inset-x-0 bottom-0 z-10 px-6 py-5">
+                    <p className="line-clamp-2 overflow-hidden break-words [display:-webkit-box] [-webkit-box-orient:vertical]">
+                      여행을 영화처럼 기록하는 이퀄리티의 영상을 공개합니다. 여행을 영화처럼 기록하는 이퀄리티의 영상을
+                      공개합니다.여행을 영화처럼 기록하는 이퀄리티의 영상을 공개합니다. 여행을 영화처럼 기록하는
+                      이퀄리티의 영상을 공개합니다.여행을 영화처럼 기록하는 이퀄리티의 영상을 공개합니다. 여행을
+                      영화처럼 기록하는 이퀄리티의 영상을 공개합니다.
+                    </p>
+                  </div>
                 </figure>
               </Link>
             </div>
@@ -127,8 +133,8 @@ export default function BlogListPage() {
             {/* 카드 영역 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-12 gap-x-6">
               {Array.from({ length: 12 }).map((_, idx) => (
-                <div key={idx} className="border rounded-2xl flex flex-col gap-4">
-                  <img alt="블로그 카드 이미지" className="" src="/images/img2.png" />
+                <div key={idx} className="border rounded-2xl flex flex-col gap-4 aspect-[2/1]">
+                  <img alt="블로그 카드 이미지" className="object-cover" src="/images/img2.png" />
                   <div>
                     <div className="gap-[8px] border">
                       <h3>블로그 카드 제목</h3>
