@@ -1,7 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
-import type React from 'react';
+import React, { useId, useRef, useState, forwardRef } from 'react';
 import { Eye, EyeOff, Check, X, Search } from 'lucide-react';
 
 export type InputStatus = 'none' | 'error' | 'success';
@@ -12,12 +11,9 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   labelHidden?: boolean;
   errorText?: string;
   status?: InputStatus;
-  // icon?: InputIcon; // clear | eye | none
   leftIcon?: InputIcon;
   rightIcon?: InputIcon;
   clearable?: boolean;
-  //   showPasswordToggle?: boolean;
-  showCheckOnValid?: boolean;
   onClear?: () => void;
   onSearch?: (value: string) => void;
   containerClassName?: string;
@@ -25,139 +21,144 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   autoComplete?: string;
 }
 
-const Input = ({
-  id,
-  name,
-  type = 'text',
-  labelText,
-  labelHidden = false,
-  autoComplete = 'off',
-  value,
-  onChange,
-  onSearch,
-  status = 'none',
-  errorText,
-  clearable = false,
-  // icon = 'none',
-  leftIcon = 'none',
-  rightIcon = 'none',
-  showCheckOnValid = false,
-  className,
-  containerClassName,
-  onClear,
-  ...props
-}: InputProps) => {
-  const inputRef = useRef<HTMLInputElement>(null);
+const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
+  {
+    id,
+    name,
+    type = 'text',
+    labelText,
+    labelHidden = false,
+    autoComplete = 'off',
+    value,
+    onChange,
+    onSearch,
+    status = 'none',
+    errorText,
+    clearable = false,
+    leftIcon = 'none',
+    rightIcon = 'none',
+    className,
+    containerClassName,
+    onClear,
+    ...props
+  },
+  ref
+) {
+  const innerRef = useRef<HTMLInputElement>(null);
+  const inputRef = (ref as React.RefObject<HTMLInputElement>) || innerRef;
+
   const [showPwd, setShowPwd] = useState(false);
-  const isPassword = type === 'password';
-  const inputType = isPassword ? (showPwd ? 'text' : 'password') : type;
   const [isFocused, setIsFocused] = useState(false);
 
-  // input상태 설정
+  const generatedId = useId();
+  const inputId = id ?? generatedId;
+
+  const isPassword = type === 'password';
+  const inputType = isPassword ? (showPwd ? 'text' : 'password') : type;
+
   const hasValue = typeof value === 'string' ? value.length > 0 : typeof value === 'number' ? true : false;
-  const effectiveStatus: InputStatus = hasValue ? 'none' : 'error';
-  const isError = !hasValue || effectiveStatus === 'error';
-  const isSuccess = !isError && status === 'success';
-  const handleFocus = () => setIsFocused(true);
 
-  // 아이콘 설정
-  const needRightIcon = isPassword || (clearable && hasValue) || (showCheckOnValid && isSuccess && hasValue);
+  const isError = status === 'error';
+  const isSuccess = status === 'success';
 
-  // 초기화 이벤트
-  const handleClear = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onClear?.();
-    onChange?.({ target: { value: '' } } as unknown as React.ChangeEvent<HTMLInputElement>);
-  };
+  const willHaveRightAdornment = rightIcon !== 'none' || isPassword || isSuccess;
 
-  // 검색 이벤트
-  const handleSearch = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (onSearch && inputRef.current) {
+  // 공통 검색 실행
+  const runSearch = () => {
+    if (onSearch && inputRef && 'current' in inputRef && inputRef.current) {
       onSearch(inputRef.current.value);
     }
   };
 
-  // 페스워드 토글 이벤트
-  const handlePasswordToggle = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') runSearch();
+  };
+
+  const handleClear = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    setShowPwd((prev) => !prev);
+    onClear?.();
+    if (onChange) {
+      onChange({ target: { value: '' } } as unknown as React.ChangeEvent<HTMLInputElement>);
+    } else if (inputRef && 'current' in inputRef && inputRef.current) {
+      inputRef.current.value = '';
+    }
   };
 
   return (
     <div className={`space-y-3 ${containerClassName ?? ''}`}>
       {labelText && (
-        <label
-          className={`peer-disabled:cursor-not-allowed peer-disabled:text-status-disable text-body-3 font-medium text-label-700 ${
-            labelHidden ? 'sr-only' : ''
-          }`}
-          htmlFor={id}
-        >
+        <label className={`text-body-3 font-medium text-label-700 ${labelHidden ? 'sr-only' : ''}`} htmlFor={inputId}>
           {labelText}
         </label>
       )}
 
       <div className="relative w-full">
-        {/* 왼쪽 아이콘 영역 */}
+        {/* 왼쪽 아이콘 */}
         {leftIcon !== 'none' && (
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center pl-6">
-            <button
-              type="button"
-              onClick={handleSearch}
-              disabled={!hasValue}
-              className="cursor-pointer"
-              aria-label="검색하기"
-            >
-              {leftIcon === 'search' && (
-                <Search className="w-[16px] h-[16px] text-neutral-400 hover:text-neutral-600" />
-              )}
-            </button>
+          <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 flex items-center">
+            {leftIcon === 'search' && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  runSearch();
+                }}
+                disabled={!onSearch}
+                className="pointer-events-auto cursor-pointer"
+              >
+                <Search className="w-[24px] h-[24px] text-neutral-400 hover:text-neutral-600" />
+              </button>
+            )}
           </div>
         )}
 
         <input
-          ref={inputRef}
-          id={id}
+          ref={inputRef as any}
+          id={inputId}
+          name={name}
           type={inputType}
           value={value}
           onChange={onChange}
-          onFocus={handleFocus}
-          aria-invalid={isError || undefined}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          onKeyDown={handleKeyDown}
           autoComplete={autoComplete}
           className={[
-            'ring-offset-background file:text-sm flex w-full rounded-md border border-line-200 bg-background-default px-6 py-[12.5px]',
+            'ring-offset-background file:text-sm flex h-[48px] w-full rounded-md border border-line-200 bg-background-default px-4 py-[12.5px]',
             'file:border-0 file:bg-transparent file:font-medium',
             'placeholder:text-body-2 placeholder:text-label-500',
             'focus-visible:outline-hidden disabled:cursor-not-allowed disabled:border-0',
             'disabled:bg-background-alternative disabled:text-status-disable disabled:placeholder:text-status-disable',
-            'focus:ring-1 focus:ring-component-dark h-[48px]',
-            isFocused && isError ? 'border-red-500 focus:ring-red-500' : '',
+            'focus:ring-1 focus:ring-component-dark',
+            isError ? 'border-red-500 focus:ring-red-500' : '',
             isSuccess ? 'border-green-500' : '',
-            leftIcon !== 'none' ? 'pl-12' : '',
-            rightIcon !== 'none' ? 'pr-12' : '',
-
-            // 커스텀 확장
+            leftIcon !== 'none' ? 'pl-10' : '',
+            willHaveRightAdornment ? 'pr-12' : '',
             className ?? '',
           ].join(' ')}
           {...props}
         />
 
-        {/* 오른쪽 아이콘 영역 */}
-        {rightIcon !== 'none' && (
-          <div className="absolute top-1/2 right-7 -translate-y-1/2 flex items-center gap-2">
+        {/* 오른쪽 아이콘/체크 */}
+        {(rightIcon !== 'none' || isPassword || isSuccess) && (
+          <div className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-2">
             {rightIcon === 'clear' && hasValue && (
-              <button type="button" onClick={handleClear} className="cursor-pointer" aria-label="입력 내용 지우기">
+              <button type="button" onClick={handleClear} className="cursor-pointer">
                 <X className="w-[24px] h-[24px] text-neutral-400 hover:text-neutral-600" />
               </button>
             )}
 
-            {rightIcon === 'eye' && (
+            {rightIcon === 'eye' && isPassword && (
               <button
                 type="button"
-                onClick={handlePasswordToggle}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowPwd((p) => !p);
+                }}
                 className="cursor-pointer"
-                aria-label={showPwd ? '비밀번호 숨기기' : '비밀번호 표시'}
               >
                 {showPwd ? (
                   <EyeOff className="w-[24px] h-[24px] text-neutral-400 hover:text-neutral-600" />
@@ -166,15 +167,16 @@ const Input = ({
                 )}
               </button>
             )}
-            {status === 'success' && <Check className="w-[24px] h-[24px] text-green-500" />}
+
+            {isSuccess && <Check className="w-[24px] h-[24px] text-green-500" />}
           </div>
         )}
       </div>
 
       {/* 에러 문구 */}
-      {isFocused && !hasValue ? <p className="text-xs text-red-600">{errorText}</p> : null}
+      {isFocused && isError && errorText ? <p className="text-xs text-red-600">{errorText}</p> : null}
     </div>
   );
-};
+});
 
 export default Input;
