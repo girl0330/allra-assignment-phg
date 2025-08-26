@@ -230,8 +230,12 @@ export default function BlogListPage() {
                 // 배너만 스켈레톤
                 <div className="h-40 w-full animate-pulse rounded-xl bg-label-100" />
               ) : (
-                blogs.map((blog, idx) => (
-                  <div key={idx} className="border rounded-2xl flex flex-col gap-4 aspect-[2/1]">
+                blogs.map((blog) => (
+                  <Link
+                    key={blog.id}
+                    href={`/blogs/${blog.id}`}
+                    className="border rounded-2xl flex flex-col gap-4 aspect-[2/1] cursor-pointer"
+                  >
                     <img alt="블로그 카드 이미지" className="object-cover" src={blog.thumbnail} />
                     <div>
                       <div className="gap-[8px] border">
@@ -240,7 +244,7 @@ export default function BlogListPage() {
                       </div>
                       <p>{formatDate(blog.createdAt)}</p>
                     </div>
-                  </div>
+                  </Link>
                 ))
               )}
             </div>

@@ -11,6 +11,7 @@ export interface BannerItem {
 
 export type BannerResponse = BannerItem[];
 
+// 블로그 타입
 export type BlogCategory = 'TREND' | 'NEWS' | 'TIP' | 'GUIDE' | 'EXPERIENCE';
 export type BlogCategoryFilter = BlogCategory | 'ALL';
 
@@ -38,6 +39,26 @@ export interface BlogListParams {
   term?: string;
 }
 
+// 블로그 상세 타입
+export interface BlogDetailResponse {
+  id: number;
+  category: BlogCategory;
+  title: string;
+  thumbnail: string;
+  summary: string;
+  content: string;
+  createdAt: string; // "YYYY-MM-DD HH:mm:ss"
+  updatedAt: string; // "YYYY-MM-DD HH:mm:ss"
+}
+
+// 배너api
+export async function fetchBanners(): Promise<BannerResponse> {
+  const res = await api.get<BannerResponse>('/api/blogs/banners');
+  console.log(res.data);
+  return res.data;
+}
+
+// 블로그api
 export async function fetchBlogs(params: BlogListParams = {}): Promise<BlogListResponse> {
   const sanitiezed = {
     page: params.page ?? 1,
@@ -51,8 +72,9 @@ export async function fetchBlogs(params: BlogListParams = {}): Promise<BlogListR
   return res.data;
 }
 
-export async function fetchBanners(): Promise<BannerResponse> {
-  const res = await api.get<BannerResponse>('/api/blogs/banners');
+// 블로그 상세 api
+export async function fetchBlogById(id: number): Promise<BlogDetailResponse> {
+  const res = await api.get<BlogDetailResponse>(`/api/blogs/${id}`);
   console.log(res.data);
   return res.data;
 }
