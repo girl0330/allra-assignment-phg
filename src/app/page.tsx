@@ -4,14 +4,32 @@ import Input from '@/components/Input';
 import Link from 'next/link';
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
-import { BlogCategory, BlogCategoryFilter, BlogListParams, BlogListResponse, fetchBlogs } from '@/lib/api/blog';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import {
+  BannerItem,
+  BannerResponse,
+  BlogCategory,
+  BlogCategoryFilter,
+  BlogListParams,
+  BlogListResponse,
+  fetchBanners,
+  fetchBlogs,
+} from '@/lib/api/blog';
 
 /* ----------------------------- React Query 훅 ----------------------------- */
 export const useBlogs = (params: BlogListParams) => {
   return useQuery<BlogListResponse, Error>({
     queryKey: ['blogs', params],
     queryFn: () => fetchBlogs(params),
+    staleTime: 60 * 1000,
+    placeholderData: keepPreviousData, // 페이지 전환 깜빡임 완화
+  });
+};
+
+export const useBanners = () => {
+  return useQuery<BannerResponse, Error>({
+    queryKey: ['banners'],
+    queryFn: fetchBanners,
     staleTime: 60 * 1000,
   });
 };
@@ -53,21 +71,26 @@ export default function BlogListPage() {
   const [activeTab, setActiveTab] = useState<BlogCategoryFilter>('ALL');
   const [page, setPage] = useState(1);
   const [pageSize] = useState(12);
-  const [category, setCategory] = useState<BlogCategory | undefined>(undefined);
+
+  // const [category, setCategory] = useState<BlogCategory | undefined>(undefined);
+  const category: BlogCategory | undefined = activeTab === 'ALL' ? undefined : (activeTab as BlogCategory);
 
   // 데이터 패칭
-  const { data, isLoading, isError } = useBlogs({
-    page: page,
-    pageSize: pageSize,
-    category: category,
-    term: term,
-  });
+  const { data: bannerData, isLoading: isBannerLoading, isError: isBannerError, error: bannerError } = useBanners();
+
+  const {
+    data: blogData,
+    isLoading: isBlogLoading,
+    isError: isBlogError,
+    error: blogError,
+    isFetching: isBlogFetching,
+  } = useBlogs({ page, pageSize, category, term });
 
   // BlogListResponse 타입으로 data를 받음
-  const blogs = data?.list || [];
-  const totalCount = data?.totalCount || 0;
-  const totalPages = data?.totalPages || 1;
-  const currentPage = data?.page || 1;
+  const blogs = blogData?.list || [];
+  const totalCount = blogData?.totalCount || 0;
+  const totalPages = blogData?.totalPages || 1;
+  const currentPage = blogData?.page || 1;
 
   // --- 페이지네이션 상태/동작 ---
   const pageNumbers = getPageNumbers(currentPage, totalPages, 5);
@@ -108,6 +131,10 @@ export default function BlogListPage() {
     setPage(1);
   }
 
+  /* 로딩/에러 UI (훅 호출 후에 분기) */
+  if (isBlogError) return <div className="p-6">블로그 로딩 실패: {blogError?.message}</div>;
+  if (isBannerError) return <div className="p-6">배너 로딩 실패: {bannerError?.message}</div>;
+
   return (
     <div className="py-[24px] md:py-[40px] lg:py-[80px]">
       <article className="max-md:container">
@@ -143,32 +170,23 @@ export default function BlogListPage() {
           {/* 배너 */}
           <section className="mt-8 md:mt-10">
             <div className="flex gap-6">
-              <Link className="flex-1" href="/blogs/11">
-                <figure className="relative aspect-[2/1]">
-                  <img alt="블로그 배너 이미지" className="object-cover" src="/images/img1.png" />
-                  <div className="absolute inset-x-0 bottom-0 z-10 px-6 py-5">
-                    <p className="line-clamp-2 overflow-hidden break-words [display:-webkit-box] [-webkit-box-orient:vertical]">
-                      여행을 영화처럼 기록하는 이퀄리티의 영상을 공개합니다. 여행을 영화처럼 기록하는 이퀄리티의 영상을
-                      공개합니다.여행을 영화처럼 기록하는 이퀄리티의 영상을 공개합니다. 여행을 영화처럼 기록하는
-                      이퀄리티의 영상을 공개합니다.여행을 영화처럼 기록하는 이퀄리티의 영상을 공개합니다. 여행을
-                      영화처럼 기록하는 이퀄리티의 영상을 공개합니다.
-                    </p>
-                  </div>
-                </figure>
-              </Link>
-              <Link className="flex-1" href="/blogs/230">
-                <figure className="relative aspect-[2/1]">
-                  <img alt="블로그 배너 이미지" className="object-cover" src="/images/img2.png" />
-                  <div className="absolute inset-x-0 bottom-0 z-10 px-6 py-5">
-                    <p className="line-clamp-2 overflow-hidden break-words [display:-webkit-box] [-webkit-box-orient:vertical]">
-                      여행을 영화처럼 기록하는 이퀄리티의 영상을 공개합니다. 여행을 영화처럼 기록하는 이퀄리티의 영상을
-                      공개합니다.여행을 영화처럼 기록하는 이퀄리티의 영상을 공개합니다. 여행을 영화처럼 기록하는
-                      이퀄리티의 영상을 공개합니다.여행을 영화처럼 기록하는 이퀄리티의 영상을 공개합니다. 여행을
-                      영화처럼 기록하는 이퀄리티의 영상을 공개합니다.
-                    </p>
-                  </div>
-                </figure>
-              </Link>
+              {isBannerLoading ? (
+                // 배너만 스켈레톤
+                <div className="h-40 w-full animate-pulse rounded-xl bg-label-100" />
+              ) : (
+                bannerData?.map((banner: BannerItem) => (
+                  <Link key={banner.id} className="flex-1" href={`/blogs/${banner.id}`}>
+                    <figure className="relative aspect-[2/1]">
+                      <img alt={banner.title} className="object-cover" src={banner.thumbnail} />
+                      <div className="absolute inset-x-0 bottom-0 z-10 px-6 py-5">
+                        <p className="line-clamp-2 overflow-hidden break-words [display:-webkit-box] [-webkit-box-orient:vertical]">
+                          {banner.summary}
+                        </p>
+                      </div>
+                    </figure>
+                  </Link>
+                ))
+              )}
             </div>
           </section>
         </div>
@@ -202,18 +220,23 @@ export default function BlogListPage() {
           <div className="gap-[48px] flex flex-col">
             {/* 카드 영역 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-12 gap-x-6">
-              {blogs.map((blog, idx) => (
-                <div key={idx} className="border rounded-2xl flex flex-col gap-4 aspect-[2/1]">
-                  <img alt="블로그 카드 이미지" className="object-cover" src={blog.thumbnail} />
-                  <div>
-                    <div className="gap-[8px] border">
-                      <h3>{blog.category}</h3>
-                      <p>{blog.title}</p>
+              {isBannerLoading ? (
+                // 배너만 스켈레톤
+                <div className="h-40 w-full animate-pulse rounded-xl bg-label-100" />
+              ) : (
+                blogs.map((blog, idx) => (
+                  <div key={idx} className="border rounded-2xl flex flex-col gap-4 aspect-[2/1]">
+                    <img alt="블로그 카드 이미지" className="object-cover" src={blog.thumbnail} />
+                    <div>
+                      <div className="gap-[8px] border">
+                        <h3>{blog.category}</h3>
+                        <p>{blog.title}</p>
+                      </div>
+                      <p>{formatDate(blog.createdAt)}</p>
                     </div>
-                    <p>{formatDate(blog.createdAt)}</p>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
 
             {/* 페이징 */}

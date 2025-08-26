@@ -1,4 +1,16 @@
+import { useQuery } from '@tanstack/react-query';
 import api from './client';
+
+// 배너 타입
+export interface BannerItem {
+  id: number;
+  title: string;
+  thumbnail: string;
+  summary: string;
+}
+
+export type BannerResponse = BannerItem[];
+
 export type BlogCategory = 'TREND' | 'NEWS' | 'TIP' | 'GUIDE' | 'EXPERIENCE';
 export type BlogCategoryFilter = BlogCategory | 'ALL';
 
@@ -35,6 +47,12 @@ export async function fetchBlogs(params: BlogListParams = {}): Promise<BlogListR
   };
 
   const res = await api.get<BlogListResponse>('/api/blogs', { params: sanitiezed });
+  console.log(res.data);
+  return res.data;
+}
+
+export async function fetchBanners(): Promise<BannerResponse> {
+  const res = await api.get<BannerResponse>('/api/blogs/banners');
   console.log(res.data);
   return res.data;
 }
