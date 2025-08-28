@@ -61,7 +61,9 @@ export default function BlogDetailForm({ id }: { id: string }) {
                 <Link href={`/blogs?category=${data!.category}`}>{categoryLabel}</Link>
               </div>
 
-              <h2 className="mt-6 text-title-3 font-bold md:text-display-2 md:font-semibold">{data!.title}</h2>
+              <h2 className="mt-6 text-title-3 font-bold md:text-display-2 md:font-semibold line-clamp-2 overflow-hidden break-words [display:-webkit-box] [-webkit-box-orient:vertical]">
+                {data!.title}
+              </h2>
 
               <p className="mt-2 text-body-3 text-label-500 md:text-title-4">{formatDate(data!.createdAt)}</p>
             </>
