@@ -15,7 +15,7 @@ type Props = { callbackUrl: string };
 export default function LoginForm({ callbackUrl }: Props) {
   const methods = useForm<LoginForm>({
     mode: 'onTouched',
-    reValidateMode: 'onBlur',
+    reValidateMode: 'onChange',
     resolver: zodResolver(LoginSchema),
     defaultValues: { businessNumber: '', password: '', saveId: false },
   });

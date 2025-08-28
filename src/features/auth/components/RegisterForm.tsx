@@ -22,8 +22,8 @@ export default function RegisterForm() {
   const [step, setStep] = useState<Step>(1);
 
   const methods = useForm<FormData>({
-    mode: 'onBlur',
-    reValidateMode: 'onBlur',
+    mode: 'onChange',
+    reValidateMode: 'onChange',
     resolver: zodResolver(SignUpSchema),
     defaultValues: {
       terms: false,
