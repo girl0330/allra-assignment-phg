@@ -10,7 +10,7 @@ const Button = ({ children, type = 'button', className = '', icon, ...props }: B
       <button
         type={type}
         {...props}
-        className={`border inline-flex items-center justify-center px-6 h-[48px] rounded-lg font-semibold cursor-pointer cursor-pointer whitespace-nowrap bg-background-default text-primary  ${
+        className={`border inline-flex items-center justify-center px-6 h-[48px] rounded-lg font-semibold cursor-pointer cursor-pointer whitespace-nowrap text-primary  ${
           icon ? 'gap-4' : ''
         } ${className}`}
       >
