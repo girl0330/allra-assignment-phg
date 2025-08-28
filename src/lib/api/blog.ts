@@ -1,4 +1,3 @@
-import { useQuery } from '@tanstack/react-query';
 import api from './client';
 
 // 배너 타입
@@ -20,8 +19,8 @@ export interface BlogCardItem {
   title: string;
   category: BlogCategory;
   thumbnail: string;
-  createdAt: string; // "YYYY-MM-DD HH:mm:ss"
-  updatedAt: string; // "YYYY-MM-DD HH:mm:ss"
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface BlogListResponse {
@@ -33,22 +32,22 @@ export interface BlogListResponse {
 }
 
 export interface BlogListParams {
-  page?: number; // default 1
-  pageSize?: number; // default 12
+  page?: number;
+  pageSize?: number;
   category?: BlogCategory;
   term?: string;
 }
 
 // 블로그 상세 타입
 export interface BlogDetailResponse {
-  id: number;
+  id: string;
   category: BlogCategory;
   title: string;
   thumbnail: string;
   summary: string;
   content: string;
-  createdAt: string; // "YYYY-MM-DD HH:mm:ss"
-  updatedAt: string; // "YYYY-MM-DD HH:mm:ss"
+  createdAt: string;
+  updatedAt: string;
 }
 
 // 배너api
@@ -73,7 +72,7 @@ export async function fetchBlogs(params: BlogListParams = {}): Promise<BlogListR
 }
 
 // 블로그 상세 api
-export async function fetchBlogById(id: number): Promise<BlogDetailResponse> {
+export async function fetchBlogById(id: string): Promise<BlogDetailResponse> {
   const res = await api.get<BlogDetailResponse>(`/api/blogs/${id}`);
   console.log(res.data);
   return res.data;

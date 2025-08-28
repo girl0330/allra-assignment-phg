@@ -96,7 +96,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       <div className="relative w-full">
         {/* 왼쪽 아이콘 */}
         {leftIcon !== 'none' && (
-          <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 flex items-center">
+          <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 flex items-center  px-4">
             {leftIcon === 'search' && (
               <button
                 type="button"
@@ -126,7 +126,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           onKeyDown={handleKeyDown}
           autoComplete={autoComplete}
           className={[
-            'ring-offset-background file:text-sm flex h-[48px] w-full rounded-md border border-line-200 bg-background-default px-4 py-[12.5px]',
+            'ring-offset-background file:text-sm flex h-[48px] w-full rounded-md border border-line-200 bg-background-default mx-4 py-[12.5px]',
             'file:border-0 file:bg-transparent file:font-medium',
             'placeholder:text-body-2 placeholder:text-label-500',
             'focus-visible:outline-hidden disabled:cursor-not-allowed disabled:border-0',
@@ -134,16 +134,16 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
             'focus:ring-1 focus:ring-component-dark',
             isError ? 'border-red-500 focus:ring-red-500' : '',
             isSuccess ? 'border-green-500' : '',
-            leftIcon !== 'none' ? 'pl-10' : '',
-            willHaveRightAdornment ? 'pr-12' : '',
+            leftIcon !== 'none' ? 'pl-[34px]' : 'pl-4',
+            willHaveRightAdornment ? 'pr-[12px]' : 'pr-4',
             className ?? '',
           ].join(' ')}
           {...props}
         />
 
-        {/* 오른쪽 아이콘/체크 */}
+        {/* 오른쪽 아이콘 */}
         {(rightIcon !== 'none' || isPassword || isSuccess) && (
-          <div className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-2">
+          <div className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-2 px-4">
             {rightIcon === 'clear' && hasValue && (
               <button type="button" onClick={handleClear} className="cursor-pointer">
                 <X className="w-[24px] h-[24px] text-neutral-400 hover:text-neutral-600" />
