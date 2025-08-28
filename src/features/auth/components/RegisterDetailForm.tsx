@@ -112,13 +112,12 @@ export default function RegisterDetails({ canSubmit }: { canSubmit: boolean }) {
           placeholder="8~15자리/영문, 숫자, 특수문자 조합 입력"
           autoComplete="new-password"
           rightIcon="eye"
-          // 아이콘 토글은 외부에서
           containerClassName="relative"
         />
         <button
           type="button"
           aria-label={showPw ? '비밀번호 숨기기' : '비밀번호 보기'}
-          className="absolute right-3 top-[76px] -translate-y-1/2 text-neutral-500" // 기존 UI에 맞게 위치 조정
+          className="absolute right-3 top-[76px] -translate-y-1/2 text-neutral-500"
           onClick={() => setShowPw((v) => !v)}
         ></button>
 

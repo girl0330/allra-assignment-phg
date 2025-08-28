@@ -53,7 +53,6 @@ export interface BlogDetailResponse {
 // 배너api
 export async function fetchBanners(): Promise<BannerResponse> {
   const res = await api.get<BannerResponse>('/api/blogs/banners');
-  console.log(res.data);
   return res.data;
 }
 
@@ -67,13 +66,11 @@ export async function fetchBlogs(params: BlogListParams = {}): Promise<BlogListR
   };
 
   const res = await api.get<BlogListResponse>('/api/blogs', { params: sanitiezed });
-  console.log(res.data);
   return res.data;
 }
 
 // 블로그 상세 api
 export async function fetchBlogById(id: string): Promise<BlogDetailResponse> {
   const res = await api.get<BlogDetailResponse>(`/api/blogs/${id}`);
-  console.log(res.data);
   return res.data;
 }

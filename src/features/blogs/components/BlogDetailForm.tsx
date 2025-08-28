@@ -27,7 +27,6 @@ export default function BlogDetailForm({ id }: { id: string }) {
 
   const categoryLabel = data ? CATEGORY_LABEL[data.category] : '';
 
-  // 링크 복사
   const handleShare = async () => {
     await navigator.clipboard.writeText(window.location.href);
     toast.success('링크가 복사되었습니다.');
