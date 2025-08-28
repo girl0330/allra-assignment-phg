@@ -13,12 +13,10 @@ export default function Header() {
   const qc = useQueryClient();
   const router = useRouter();
 
-  // ✅ 미들웨어 없이도 쓸 간단한 플래그들
-  const [hydrated, setHydrated] = useState(false); // 클라이언트 마운트 완료
-  const [hasToken, setHasToken] = useState(false); // 토큰 유무
+  const [hydrated, setHydrated] = useState(false);
+  const [hasToken, setHasToken] = useState(false);
 
   useEffect(() => {
-    // 클라이언트에서만 localStorage 접근
     setHasToken(!!getAccessToken());
     setHydrated(true);
   }, []);
