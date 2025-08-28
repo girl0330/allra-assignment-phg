@@ -12,7 +12,6 @@ type ModalProps = {
 
 export default function Modal({ open, onClose, children }: ModalProps) {
   const router = useRouter();
-  // ESC 닫기
   useEffect(() => {
     if (!open) return;
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -31,8 +30,8 @@ export default function Modal({ open, onClose, children }: ModalProps) {
         <Button
           className="w-full bg-primary"
           onClick={() => {
-            onClose(); // 모달 상태 닫기
-            router.push('/'); // 홈으로 이동
+            onClose();
+            router.push('/');
           }}
         >
           <p className=" text-background-default">닫기</p>
